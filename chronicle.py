@@ -108,7 +108,7 @@ def _arrange_text(in_dir: str, original_size: tuple) -> dict:
         if in_dir.endswith('/'):
             new_name = in_dir[:-1]
         new_name += '_unchecked/'
-        if not '_unchecked/' in in_dir:
+        if '_unchecked/' not in in_dir:
             rename(in_dir, new_name)
 
     return text_fragments
@@ -125,7 +125,7 @@ def _rename_fragments(fragments: dict) -> bool:
             file_parts = tuple(basename(str(file)).split('.'))
             file_name, file_ext = file_parts
             new_name = dirname(file) + '/' + file_name + '_' + str(frag) + '.' + file_ext
-            if not frag in file:
+            if frag not in file:
                 rename(file, new_name)
 
     return True

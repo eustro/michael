@@ -5,10 +5,12 @@
 Module for basic operations on directories.
 """
 
+from json import dump
 from logging import error
 from os import remove
 from os import rmdir
 from os import walk
+from os.path import exists
 from os.path import join
 
 
@@ -40,7 +42,7 @@ def list_sub_dirs(path: str):
         return None
 
 
-def clear_dir(path: str, del_sudirs=False, file_ext=['txt', 'png']):
+def clear_dir(path: str, del_sudirs=False, file_ext=[]):
     """
     Cleans recursively working directory of the application.
     Removes specified file types.
@@ -57,32 +59,72 @@ def clear_dir(path: str, del_sudirs=False, file_ext=['txt', 'png']):
         if del_sudirs:
             dir_paths = [join(dirpath, sub) for sub in subdirs]
             for sub in dir_paths:
-                rmdir(sub)
+                try:
+                    rmdir(sub)
+                except OSError as os:
+                    error(os)
     return True
 
 
-def open_file(path: str, mode='r', encoding='utf-8'):
+def open_file(path: str, encoding='utf-8'):
     """
-    Opens file in given mode and encoding (default UTF-8).
-    Creates File, if it doesn't exist.
-    Returns text string on sucess.
-    Returns none on failure.
+    Opens file for reading only.
+    Encoding may be specified (default: utf-8)
+    Returns None, if file already exists.
+    Returns file object on sucess.
+    Returns None on failure.
     """
+    if not exists(path):
+        return None
     try:
-        fp = open(path, mode)
+        fp = open(path, mode='r', encoding=encoding)
         return fp
     except IOError as io:
         error(io)
         return None
 
 
-def obj_to_json(obj, path: str) -> bool:
+def create_file(path: str, file_name: str, encoding='utf-8'):
     """
-    Exports a Python object ot json.
+    Creates a new file for writing.
+    Encoding may be specified (default: utf-8).
+    Returns none, if file already exists.
+    Returns file object on sucess.
+    Returns None on failure.
+    """
+    file_path = join(path, file_name)
+    if exists(file_path):
+        fp = open_file(file_path)
+        return fp
+    try:
+        fp = open(file_path, mode='w', encoding=encoding)
+        return fp
+    except IOError as io:
+        error(io)
+        return None
+
+
+def obj_to_json(out_path: str, file_name: str, obj: object):
+    """
+    Dumps Python object to a json file.
     Returns True on sucess.
-    Returns False on Failure.
+    Returns False on failure.
     """
-    pass
+    if not exists(out_path):
+        return False
+    fp = create_file(out_path, file_name)
+    if not fp:
+        return False
+    try:
+        dump(obj, fp,
+             ensure_ascii=False,
+             separators=(', ', ': '),
+             indent=4)
+        fp.close()
+        return True
+    except Exception as e:
+        error(e)
+        return False
 
 
 def main():
