@@ -6,6 +6,7 @@ Module for basic operations on directories.
 """
 
 from json import dump
+from json import load
 from logging import error
 from os import remove
 from os import rmdir
@@ -122,6 +123,25 @@ def obj_to_json(out_path: str, file_name: str, obj: object):
              indent=4)
         fp.close()
         return True
+    except Exception as e:
+        error(e)
+        return False
+
+
+def json_to_obj(file_path: str):
+    """
+    Loads a Python object from a json file.
+    Returns True on sucess.
+    Returns False on failure.
+    """
+    if not exists(file_path):
+        return False
+    fp = open_file(file_path)
+    if not fp:
+        return False
+    try:
+        obj = load(fp)
+        return obj
     except Exception as e:
         error(e)
         return False

@@ -18,9 +18,17 @@ from os.path import exists
 
 
 def tag_file(path: str, lang: str):
-
-    json_skeletton = []
-
+    """
+    @path: path of file.
+    @lang: language to be used for tagging.
+    Chunking and tagging of a file using the TreeTagger.
+    Returns a json-skeleton on success. Skeleton can be used to create
+    a json file and to reload tagging results.
+    Returns None on Failure.
+    """
+    json_skeleton = []
+    if lang not in ['en', 'es', 'de', 'fr']:
+        error('{0} language not supported!'.format(lang))
     fp = open_file(path)
     if not fp:
         return None
@@ -36,10 +44,10 @@ def tag_file(path: str, lang: str):
         w['word'] = tag.word
         w['pos'] = tag.pos
         w['lemma'] = tag.lemma
-        json_skeletton.append(w)
+        json_skeleton.append(w)
 
     try:
-        return json_skeletton
+        return json_skeleton
     except TypeError as type_e:
         error(type_e)
         return None
