@@ -55,7 +55,6 @@ def ocr_on_image_stack(in_dir: str) -> bool:
     for one_page in pdf_dirs:
         pdf_pages = list_sub_dirs(one_page)
         for page in pdf_pages:
-            print(page)
             for png in walk_dir(page, file_type='png'):
                 _ocr_on_image(png)
     return True

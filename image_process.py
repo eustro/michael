@@ -13,7 +13,6 @@ from os.path import exists
 from os.path import dirname
 from os.path import realpath
 from os import listdir
-from json import json
 import logging
 import warnings
 import numpy as np
@@ -22,9 +21,6 @@ from skimage.transform import rotate
 from utility import walk_dir
 from utility import list_sub_dirs
 from utility import clear_dir
-
-
-cwd = dirname(realpath(__file__))
 
 
 def _set_params(resolution: tuple) -> dict:
@@ -146,11 +142,6 @@ def _detect_text_boxes(image: np.ndarray, horizontal=False) -> list:
     return cut_positions
 
 
-def _get_minimum_text_box(image: np.ndarray):
-    # TODO
-    pass
-
-
 def _get_text_from_image(image: np.ndarray) -> list:
     params = {'filter_small_hor': 0.035,
               'filter_small_ver': 0.15,
@@ -162,10 +153,10 @@ def _get_text_from_image(image: np.ndarray) -> list:
     hor_cuts = _detect_text_boxes(image)
 
     if not hor_cuts:
-        return image
+        return [image]
 
     if len(hor_cuts) > params['max_no_of_hor_cuts']:
-        return image
+        return [image]
 
     for hor_cut in hor_cuts:
 
@@ -317,20 +308,3 @@ def process_pdf_stack(in_dir: str, out_dir: str, dpi='300') -> bool:
         _pdf_to_image(pdf_path, out_dir, dpi)
 
     return True
-
-
-def main():
-    """Simple test."""
-    warnings.simplefilter('default', UserWarning)
-    in_dir = '/Users/eugenstroh/Desktop/michael_the_syrian_1/'
-    out_dir = '/Users/eugenstroh/Desktop/michael_the_syrian_1/'
-
-    process_pdf_stack(in_dir, out_dir)
-
-    process_image_stack(in_dir)
-
-    # clear_dir(in_dir)
-
-
-if __name__ == '__main__':
-    main()

@@ -15,7 +15,7 @@ from os.path import exists
 from os.path import join
 
 
-def walk_dir(path: str, file_type: str):
+def walk_dir(path: str, file_type: str) -> list:
     """
     Walks directory to find all files with given file type extension.
     """
@@ -26,10 +26,10 @@ def walk_dir(path: str, file_type: str):
         return file_paths
     except IOError as io:
         error(io)
-        return None
+        return []
 
 
-def list_sub_dirs(path: str):
+def list_sub_dirs(path: str) -> list:
     """
     Lists all subdirectories in given directory.
     Retruns absolute paths of directories.
@@ -40,15 +40,17 @@ def list_sub_dirs(path: str):
         return ls_dir
     except IOError as io:
         error(io)
-        return None
+        return []
 
 
-def clear_dir(path: str, del_sudirs=False, file_ext=[]):
+def clear_dir(path: str, del_sudirs=False, file_ext=None) -> bool:
     """
     Cleans recursively working directory of the application.
     Removes specified file types.
     Removes also all subdirectories if set to True.
     """
+    if not file_ext:
+        file_ext = []
     for dirpath, subdirs, filenames in walk(path, topdown=False):
         file_paths = [join(dirpath, a_file) for a_file in filenames]
         for a_file in file_paths:
@@ -105,7 +107,7 @@ def create_file(path: str, file_name: str, encoding='utf-8'):
         return None
 
 
-def obj_to_json(out_path: str, file_name: str, obj: object):
+def obj_to_json(out_path: str, file_name: str, obj: object) -> bool:
     """
     Dumps Python object to a json file.
     Returns True on sucess.
@@ -128,7 +130,7 @@ def obj_to_json(out_path: str, file_name: str, obj: object):
         return False
 
 
-def json_to_obj(file_path: str):
+def json_to_obj(file_path: str) -> bool:
     """
     Loads a Python object from a json file.
     Returns True on sucess.
@@ -145,11 +147,3 @@ def json_to_obj(file_path: str):
     except Exception as e:
         error(e)
         return False
-
-
-def main():
-    in_dir = '/Users/eugenstroh/Desktop/michael_the_syrian_1/'
-    clear_dir(in_dir, del_sudirs=True)
-
-if __name__ == '__main__':
-    main()

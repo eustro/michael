@@ -66,7 +66,7 @@ class Config:
 
         return config_dicts
 
-    def set_params_text_box(self, resolution: tuple) -> dict:
+    def set_params_text_box(self, resolution: tuple, default_dim=(1200, 1600)) -> dict:
         """
         Function sets params for text box recognition.
 
@@ -81,9 +81,8 @@ class Config:
             dim_1, dim_2 = 1200, 1600
         # Reference resolution of 150 dpi.
         # Resolution lower than that yields inaccurate results.
-        def_dim_1, def_dim_2 = 1200, 1600
+        def_dim_1, def_dim_2 = default_dim
 
-        # Works for res around 1200 x 1600pixels (150 dpi).
         params = {'black_value': 0.1,
                   'white_value': 0.9,
 
@@ -189,13 +188,3 @@ class Config:
                         params)
 
         return params
-
-
-def main():
-    conf = Config()
-    print(conf)
-    print(conf.config_files['params_chronicle'])
-
-
-if __name__ == '__main__':
-    main()

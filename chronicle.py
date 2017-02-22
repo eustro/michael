@@ -49,7 +49,7 @@ def _arrange_text(in_dir: str, original_size: tuple) -> dict:
     text_boxes = walk_dir(in_dir, file_type='png')
     # Maybe no output by image processing, so need to be checked manually!
     if not text_boxes or text_boxes == []:
-        return []
+        return {}
 
     images = []
 
@@ -157,12 +157,3 @@ def process_chronicle(in_dir: str) -> bool:
     for sub_dir in dirs:
         _process_page(sub_dir)
     return True
-
-
-def main():
-    in_dir = '/Users/eugenstroh/Desktop/michael_the_syrian_1/'
-    process_chronicle(in_dir)
-
-
-if __name__ == '__main__':
-    main()
