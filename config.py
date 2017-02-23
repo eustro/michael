@@ -25,8 +25,11 @@ class Config:
                          'params_chronicle': 'params_chronicle.json'}
 
     def __init__(self,
-                 config_dir=dirname(realpath(__file__)),
-                 resolution=None):
+                 in_dir,
+                 out_dir,
+                 pdf_dpi='300',
+                 image_type='png',
+                 config_dir=dirname(realpath(__file__))):
         """
         Constructor initializes Config.
 
@@ -34,11 +37,14 @@ class Config:
         If default values are used, they are exported as json config files.
         All module use this class for configuration.
         """
+        self.in_dir = in_dir
+        self.out_dir = out_dir
+        self.pdf_dpi = pdf_dpi
+        self.image_type = image_type
         self.config_dir = config_dir
-        self.resolution = resolution
         self.config_files = self.read_config_files()
-
-        self.params_text_box = self.set_params_text_box(resolution)
+        # NOTE: Function reference for text ox params, because they depend on cut size.
+        self.params_text_box = self.set_params_text_box
         self.params_text_cut = self.set_params_text_cut()
         self.params_ocr = self.set_params_ocr()
         self.params_chronicle = self.set_params_chronicle()

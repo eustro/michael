@@ -7,63 +7,51 @@ Module for tesseract ocr. Uses default system tesseract installation.
 
 import os
 import logging
-from utility import list_sub_dirs
-from utility import walk_dir
+from .utility import list_sub_dirs
+from .utility import walk_dir
+from .config import Config
 
 
-def _set_ocr_params(tess_dir='/opt/local/share',
-                    lan='fra',
-                    page_mode=3) -> dict:
+class OCR:
+    def __init__(self, conf):
+        if not isinstance(conf, Config):
+            raise TypeError('Need instance of Config class!')
+        self.conf = conf
 
-    params = {'tess_dir': tess_dir,
-              'lan': lan,
-              'page_mode': page_mode}
+    def __ocr_on_image(self, image_path: str) -> bool:
 
-    return params
+        par = self.conf.params_ocr
 
+        if not os.path.exists(image_path):
+            return False
 
-def _ocr_on_image(image_path: str) -> bool:
+        dir_name = os.path.dirname(image_path)
+        file_name = os.path.basename(image_path)[:-4]
 
-    par = _set_ocr_params()
+        try:
+            os.chdir(dir_name)
+        except OSError as e:
+            logging.error(e)
+            return False
 
-    if not os.path.exists(image_path):
-        return False
-
-    dir_name = os.path.dirname(image_path)
-    file_name = os.path.basename(image_path)[:-4]
-
-    try:
-        os.chdir(dir_name)
-    except OSError as e:
-        logging.error(e)
-        return False
-
-    os.system('tesseract --tessdata-dir {0} {1} {2} -l {3} -psm {4}'.format(par['tess_dir'],
-                                                                            image_path,
-                                                                            file_name,
-                                                                            par['lan'],
-                                                                            par['page_mode']))
-    return True
+        os.system('tesseract --tessdata-dir {0} {1} {2} -l {3} -psm {4}'.format(par['tess_dir'],
+                                                                                image_path,
+                                                                                file_name,
+                                                                                par['lan'],
+                                                                                par['page_mode']))
+        return True
 
 
-def ocr_on_image_stack(in_dir: str) -> bool:
-    # Read Directories for processed PDF files
-    pdf_dirs = list_sub_dirs(in_dir)
-    if not pdf_dirs:
-        return False
-    # Read Direcotries of all pages in a PDF directory
-    for one_page in pdf_dirs:
-        pdf_pages = list_sub_dirs(one_page)
-        for page in pdf_pages:
-            for png in walk_dir(page, file_type='png'):
-                _ocr_on_image(png)
-    return True
-
-
-def main():
-    in_dir = '/Users/eugenstroh/Desktop/michael_the_syrian_1/'
-
-    ocr_on_image_stack(in_dir)
-
-if __name__ == '__main__':
-    main()
+    def ocr_on_image_stack(self) -> bool:
+        # Read Directories for processed PDF files
+        in_dir = self.conf.in_dir
+        pdf_dirs = list_sub_dirs(in_dir)
+        if not pdf_dirs:
+            return False
+        # Read Direcotries of all pages in a PDF directory
+        for one_page in pdf_dirs:
+            pdf_pages = list_sub_dirs(one_page)
+            for page in pdf_pages:
+                for png in walk_dir(page, file_type='png'):
+                    self.__ocr_on_image(png)
+        return True
