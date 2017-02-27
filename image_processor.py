@@ -18,6 +18,7 @@ from utility import list_sub_dirs
 from config import Config
 
 
+# TODO: Check, if algorithm can be changed/extended to detect L-forms in texts.
 class ImageProcessor:
     def __init__(self, conf):
         if not isinstance(conf, Config) or not conf:

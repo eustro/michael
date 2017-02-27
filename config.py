@@ -9,6 +9,9 @@ from utility import json_to_obj
 from utility import obj_to_json
 
 
+# TODO: Refactor dump statements, put them in constructor.
+# TODO: Do not use class variables to get params, use function call.
+# TODO: Make derivations of class for each config section. Abstract class -> etc.
 class Config:
     """
     Class holds all config files for the application.
@@ -195,3 +198,15 @@ class Config:
                         params)
 
         return params
+
+    # TODO
+    def set_pos_params(self):
+        pass
+
+    # TODO
+    def set_nlp_params(self):
+        pass
+
+    # TODO
+    def set_clening_params(self):
+        pass
