@@ -1,40 +1,86 @@
 # coding=utf-8
 
+import argparse
+import sys
 
-from utility import walk_dir
-from image_process import process_pdf_stack
-from image_process import process_image_stack
-from ocr import ocr_on_image_stack
-from chronicle import process_chronicle
+from config import Config
+from pdf_processor import PDFProcessor
+from image_processor import ImageProcessor
+from chronicle_processor import ChronicleProcessor
+from ocr_processor import OCRProcessor
+
+parser = argparse.ArgumentParser(prog='PDFCrop')
+parser.add_argument('--dump_conf', help='Dump default config as json files.', action='store_true')
+parser.add_argument('inp', help='Specify input directory.')
+parser.add_argument('out', help='Specify output directory.')
+parser.add_argument('--config_dir', help='Specify configuration files, if you have some custom ones.')
+parser.add_argument('--image_type', help='Type of image you want to process.')
+parser.add_argument('--dpi', help='DPI for image converting.', action="store_true")
+parser.add_argument('--pdf', help='Process pdf files, if not already done.', action="store_true")
+parser.add_argument('--image', help='Process image files from pdf files.', action="store_true")
+parser.add_argument('--chronicle', help='Process chronicle of Michael the Syrian.', action="store_true")
+parser.add_argument('--ocr', help='Run Google Tesseract OCR on data.', action='store_true')
+parser.add_argument('--nlp', help='Run nlp operations on data', action='store_true')
+parser.add_argument('--draw', help='Run matplotlib to show calculations', action='store_true')
+
+process_order = ('pdf', 'image', 'chronicle', 'ocr', 'nlp', 'draw')
+
+args = parser.parse_args()
 
 
-in_dir = "/Users/eugenstroh/Desktop/michael_the_syrian_1/"
-out_dir = in_dir
+def dump_config_files():
+    if args.config_dir:
+        conf = Config(args.inp, args.out, config_dir=args.config_dir, dump_conf=True)
+    else:
+        conf = Config(args.inp, args.out, dump_conf=True)
+    # Dump config files
+    sys.exit(0)
 
 
 def main():
-    if not in_dir:
-        return False
+    if args.dump_conf:
+        dump_config_files()
 
-    pdf_stack = process_pdf_stack(in_dir, out_dir)
+    conf = Config(args.inp, args.out)
 
-    if not pdf_stack:
-        return False
+    if args.config_dir:
+        conf.config_dir = args.config_dir
+    if args.image_type:
+        conf.immage_type = args.image_type
+    if args.dpi:
+        conf.pdf_dpi = args.dpi
 
-    image_stack = process_image_stack(in_dir)
+    if args.pdf:
+        pdf_proccessor = PDFProcessor(conf)
+    else:
+        pdf_proccessor = None
 
-    if not image_stack:
-        return False
+    if args.image:
+        image_proccessor = ImageProcessor(conf)
+    else:
+        image_proccessor = None
 
-    chronicle = process_chronicle(in_dir)
+    if args.chronicle:
+        order_chronicle = ChronicleProcessor(conf)
+    else:
+        order_chronicle = None
 
-    if not chronicle:
-        return False
+    if args.ocr:
+        ocr_processor = OCRProcessor(conf)
+    else:
+        ocr_processor = None
 
-    ocr = ocr_on_image_stack(in_dir)
+    if args.nlp:
+        pass
 
-    if not ocr:
-        return False
+    if args.draw:
+        pass
+
+    ops = (pdf_proccessor, image_proccessor, order_chronicle, ocr_processor)
+
+    for o in ops:
+        if o:
+            o.run()
 
 
 if __name__ == '__main__':

@@ -7,14 +7,14 @@ Module for tesseract ocr. Uses default system tesseract installation.
 
 import os
 import logging
-from .utility import list_sub_dirs
-from .utility import walk_dir
-from .config import Config
+from utility import list_sub_dirs
+from utility import walk_dir
+from config import Config
 
 
-class OCR:
+class OCRProcessor:
     def __init__(self, conf):
-        if not isinstance(conf, Config):
+        if not isinstance(conf, Config) or not conf:
             raise TypeError('Need instance of Config class!')
         self.conf = conf
 
@@ -41,8 +41,7 @@ class OCR:
                                                                                 par['page_mode']))
         return True
 
-
-    def ocr_on_image_stack(self) -> bool:
+    def __ocr_on_image_stack(self) -> bool:
         # Read Directories for processed PDF files
         in_dir = self.conf.in_dir
         pdf_dirs = list_sub_dirs(in_dir)
@@ -55,3 +54,6 @@ class OCR:
                 for png in walk_dir(page, file_type='png'):
                     self.__ocr_on_image(png)
         return True
+
+    def run(self):
+        self.__ocr_on_image_stack()

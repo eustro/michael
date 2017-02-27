@@ -2,7 +2,6 @@
 
 
 from os.path import dirname
-from os.path import exists
 from os.path import join
 from os.path import realpath
 
@@ -29,7 +28,8 @@ class Config:
                  out_dir,
                  pdf_dpi='300',
                  image_type='png',
-                 config_dir=dirname(realpath(__file__))):
+                 config_dir=dirname(realpath(__file__)),
+                 dump_conf=False):
         """
         Constructor initializes Config.
 
@@ -42,9 +42,10 @@ class Config:
         self.pdf_dpi = pdf_dpi
         self.image_type = image_type
         self.config_dir = config_dir
+        self.dump_conf = dump_conf
         self.config_files = self.read_config_files()
         # NOTE: Function reference for text ox params, because they depend on cut size.
-        self.params_text_box = self.set_params_text_box
+        self.params_text_box = self.set_params_text_box()
         self.params_text_cut = self.set_params_text_cut()
         self.params_ocr = self.set_params_ocr()
         self.params_chronicle = self.set_params_chronicle()
@@ -72,7 +73,7 @@ class Config:
 
         return config_dicts
 
-    def set_params_text_box(self, resolution: tuple, default_dim=(1200, 1600)) -> dict:
+    def set_params_text_box(self, resolution=(1200, 1600), default_dim=(1200, 1600)) -> dict:
         """
         Function sets params for text box recognition.
 
@@ -96,7 +97,7 @@ class Config:
                   'min_white_pixels': min(dim_1, dim_2),
                   'min_white_lines': 0.006,
                   'min_black_lines': 0.001875,
-                  'min_crop_ratio': 9.0,
+                  'min_crop_ratio': 11.0,
 
                   'correction_upper': -10,
                   'correction_lower': -5,
@@ -120,7 +121,7 @@ class Config:
             params['correction_left'] *= ratio
             params['correction_right'] *= ratio
 
-        if not self.config_files['params_text_box']:
+        if self.dump_conf:
             obj_to_json(self.config_dir,
                         Config.config_file_names['params_text_box'],
                         params)
@@ -139,9 +140,9 @@ class Config:
         params = {'filter_small_hor': 0.035,
                   'filter_small_ver': 0.15,
                   'max_no_of_hor_cuts': 10,
-                  'max_no_of_ver_cuts': 2}
+                  'max_no_of_ver_cuts': 3}
 
-        if not self.config_files['params_text_cut']:
+        if self.dump_conf:
             obj_to_json(self.config_dir,
                         Config.config_file_names['params_text_cut'],
                         params)
@@ -161,7 +162,7 @@ class Config:
                   'lan': 'fra',
                   'page_mode': 3}
 
-        if not self.config_files['params_ocr']:
+        if self.dump_conf:
             obj_to_json(self.config_dir,
                         Config.config_file_names['params_ocr'],
                         params)
@@ -188,7 +189,7 @@ class Config:
                   # Lower part
                   'footnotes': 4}
 
-        if not self.config_files['params_chronicle']:
+        if self.dump_conf:
             obj_to_json(self.config_dir,
                         Config.config_file_names['params_chronicle'],
                         params)

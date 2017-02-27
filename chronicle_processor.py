@@ -9,15 +9,15 @@ from os.path import basename
 from os import rename
 from logging import error
 from skimage.io import imread
-from .utility import walk_dir
-from .utility import list_sub_dirs
-from .config import Config
+from utility import walk_dir
+from utility import list_sub_dirs
+from config import Config
 
 
-class Chronicle:
+class ChronicleProcessor:
     def __init__(self, conf):
-        if not isinstance(conf, Config):
-            raise TypeError
+        if not isinstance(conf, Config) or not conf:
+            raise TypeError('Need instance of Config class!')
         self.conf = conf
 
     def __arrange_text(self, in_dir: str, original_size: tuple) -> dict:
@@ -96,7 +96,6 @@ class Chronicle:
 
         return text_fragments
 
-
     def _rename_fragments(self, fragments: dict) -> bool:
         if not fragments:
             return False
@@ -113,8 +112,7 @@ class Chronicle:
 
         return True
 
-
-    def _process_page(self, in_dir) -> bool:
+    def __process_page(self, in_dir) -> bool:
         dirs = list_sub_dirs(in_dir)
         if not dirs:
             return False
@@ -130,7 +128,6 @@ class Chronicle:
             self._rename_fragments(fragments)
         return True
 
-
     def __process_chronicle(self) -> bool:
         in_dir = self.conf.in_dir
         dirs = list_sub_dirs(in_dir)
@@ -138,7 +135,7 @@ class Chronicle:
             return False
 
         for sub_dir in dirs:
-            self._process_page(sub_dir)
+            self.__process_page(sub_dir)
         return True
 
     def run(self):

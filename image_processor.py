@@ -6,24 +6,21 @@ Module provides optical text box recognition in image files.
 """
 
 from os import mkdir
-from os import system
 from os.path import join
 from os.path import basename
 from os.path import exists
-from os import listdir
 import logging
 import numpy as np
 from skimage import io
 from skimage.transform import rotate
-from .utility import walk_dir
-from .utility import list_sub_dirs
-from .utility import clear_dir
-from .config import Config
+from utility import walk_dir
+from utility import list_sub_dirs
+from config import Config
 
 
 class ImageProcessor:
     def __init__(self, conf):
-        if not isinstance(conf, Config):
+        if not isinstance(conf, Config) or not conf:
             raise TypeError('Need instance of Config class!')
         self.conf = conf
 
@@ -31,7 +28,7 @@ class ImageProcessor:
         if image.ndim > 2 or 0 in image.shape:
             return []
 
-        params = self.conf.params_text_box(image.shape)
+        params = self.conf.set_params_text_box(image.shape)
 
         dim1, dim2 = image.shape
 
@@ -39,7 +36,7 @@ class ImageProcessor:
             return []
 
         if horizontal:
-            image_copy = rotate(image, 90, resize=True)
+            image_copy = rotate(image, 270, resize=True)
         else:
             image_copy = image
 
@@ -103,12 +100,8 @@ class ImageProcessor:
 
         return cut_positions
 
-
-    def __get_text_from_image(self, image: np.ndarray) -> list:
-        params = {'filter_small_hor': 0.035,
-                  'filter_small_ver': 0.15,
-                  'max_no_of_hor_cuts': 10,
-                  'max_no_of_ver_cuts': 2}
+    def __cut_text_from_image(self, image: np.ndarray) -> list:
+        params = self.conf.params_text_cut
 
         text_images = []
 
@@ -151,12 +144,11 @@ class ImageProcessor:
                     text_images.append(hor_image)
                     continue
 
-                ver_image = hor_image[:, hor_image.shape[1] - y_out:hor_image.shape[1] - y_in]
+                ver_image = hor_image[:, y_in:y_out]
 
                 text_images.append(ver_image)
 
         return text_images
-
 
     def __save_text_box(self, image: np.ndarray, out_dir: str, file_name: str) -> bool:
         # If not enough axes or empty slice, break.
@@ -174,7 +166,6 @@ class ImageProcessor:
             logging.error(e)
             return False
 
-
     def __process_image(self, image: np.ndarray, out_dir: str, page_no: str, file_type='png') -> bool:
         path = join(out_dir, page_no)
 
@@ -189,13 +180,12 @@ class ImageProcessor:
 
         file_name = 1
 
-        for text_image in self.__get_text_from_image(image):
+        for text_image in self.__cut_text_from_image(image):
             fname = str(file_name) + '.' + file_type
             self.__save_text_box(text_image, path, fname)
             file_name += 1
 
         return True
-
 
     def __process_image_stack(self) -> bool:
         """
@@ -241,42 +231,5 @@ class ImageProcessor:
 
         return True
 
-
-    def __pdf_to_image(self, pdf_path: str, dpi: str):
-        out_dir = self.conf.out_dir
-        dir_name = basename(pdf_path).split('.')[0]
-        new_dir = join(out_dir, dir_name)
-        try:
-            mkdir(new_dir)
-        except OSError as e:
-            logging.error(e)
-        if listdir(new_dir):
-            logging.error('{0} is not empty'.format(new_dir))
-            clear_dir(new_dir)
-        system('gs -q -dSAFER -sDEVICE=pngmono -r{0} -dBATCH -dNOPAUSE -sOutputFile={1}%d.png {2}'
-               .format(dpi, join(out_dir, dir_name) + '/', pdf_path))
-
-        return True
-
-
-    def __process_pdf_stack(self) -> bool:
-        """
-        Converts a pile of pdf files to images files.
-        One image file per one pdf page is created and saved.
-        File name is the pdf page no.
-        """
-        in_dir = self.conf.in_dir
-        dpi = self.conf.pdf_dpi
-        pdf_files = walk_dir(in_dir, file_type='pdf')
-
-        if not pdf_files:
-            return False
-
-        for pdf_path in pdf_files:
-            self.__pdf_to_image(pdf_path, dpi)
-
-        return True
-
     def run(self):
-        self.__process_pdf_stack()
         self.__process_image_stack()
