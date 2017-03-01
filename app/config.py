@@ -5,13 +5,9 @@ from os.path import dirname
 from os.path import join
 from os.path import realpath
 
-from app.utility import json_to_obj
-from app.utility import obj_to_json
+from app.helpers import read_json_to_obj
+from app.helpers import dump_obj_to_json
 
-
-# TODO: Refactor dump statements, put them in constructor.
-# TODO: Do not use class variables to get params, use function call.
-# TODO: Make derivations of class for each config section. Abstract class -> etc.
 
 class Config:
     """
@@ -30,6 +26,7 @@ class Config:
     def __init__(self,
                  in_dir,
                  out_dir,
+                 lang='en',
                  pdf_dpi='300',
                  image_type='png',
                  config_dir=dirname(realpath(__file__)),
@@ -43,6 +40,7 @@ class Config:
         """
         self.in_dir = in_dir
         self.out_dir = out_dir
+        self.lang = lang
         self.pdf_dpi = pdf_dpi
         self.image_type = image_type
         self.config_dir = config_dir
@@ -55,21 +53,21 @@ class Config:
         self.params_chronicle = self.set_params_chronicle()
 
         if self.dump_conf:
-            obj_to_json(self.config_dir,
-                        Config.config_file_names['params_text_box'],
-                        self.params_text_box)
+            dump_obj_to_json(self.config_dir,
+                             Config.config_file_names['params_text_box'],
+                             self.params_text_box)
 
-            obj_to_json(self.config_dir,
-                        Config.config_file_names['params_text_cut'],
-                        self.params_text_cut)
+            dump_obj_to_json(self.config_dir,
+                             Config.config_file_names['params_text_cut'],
+                             self.params_text_cut)
 
-            obj_to_json(self.config_dir,
-                        Config.config_file_names['params_ocr'],
-                        self.params_ocr)
+            dump_obj_to_json(self.config_dir,
+                             Config.config_file_names['params_ocr'],
+                             self.params_ocr)
 
-            obj_to_json(self.config_dir,
-                        Config.config_file_names['params_chronicle'],
-                        self.params_chronicle)
+            dump_obj_to_json(self.config_dir,
+                             Config.config_file_names['params_chronicle'],
+                             self.params_chronicle)
 
     def read_config_files(self) -> dict:
         """
@@ -88,7 +86,7 @@ class Config:
             if key not in Config.config_file_names:
                 continue
             json_path = join(self.config_dir, Config.config_file_names[key])
-            obj = json_to_obj(json_path)
+            obj = read_json_to_obj(json_path)
             if obj:
                 config_dicts[key] = obj
 

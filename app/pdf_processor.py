@@ -8,8 +8,8 @@ from os import system
 from os.path import basename
 from os.path import join
 
-from .utility import clear_dir
-from .utility import walk_dir
+from .helpers import clear_dir
+from .helpers import walk_dir
 
 from app.config import Config
 

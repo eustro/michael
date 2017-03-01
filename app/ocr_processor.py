@@ -8,8 +8,8 @@ Module for tesseract ocr. Uses default system tesseract installation.
 import logging
 import os
 
-from .utility import list_sub_dirs
-from .utility import walk_dir
+from .helpers import list_sub_dirs
+from .helpers import walk_dir
 
 from app.config import Config
 
@@ -49,7 +49,7 @@ class OCRProcessor:
         pdf_dirs = list_sub_dirs(in_dir)
         if not pdf_dirs:
             return False
-        # Read Direcotries of all pages in a PDF directory
+        # Read Directories of all pages in a PDF directory
         for one_page in pdf_dirs:
             pdf_pages = list_sub_dirs(one_page)
             for page in pdf_pages:

@@ -5,16 +5,19 @@
 Uses tree-tagger chunker, tagger and lemmatizer on text files.
 """
 
-import json
+import os
 from logging import error
 
-from .utility import open_file
+from .helpers import open_file
+from .helpers import list_sub_dirs
+from .helpers import walk_dir
+from .helpers import dump_obj_to_json
 
 from app.config import Config
 
 
 # TODO: Stanford NLP could also be implemented.
-class NLPProcessor:
+class POSProcessor:
     def __init__(self, conf):
         if not isinstance(conf, Config) or not conf:
             raise TypeError('Need instance of Config class!')
@@ -36,7 +39,7 @@ class NLPProcessor:
 
         json_skeleton = []
         if lang not in ('en', 'es', 'de', 'fr'):
-            error('{0} language not supported!'.format(lang))
+            error('{0} language not supported by TreeTagger!'.format(lang))
             return []
         fp = open_file(path)
         if not fp:
@@ -55,15 +58,24 @@ class NLPProcessor:
             json_skeleton.append(w)
 
         try:
-            return json.loads(json_skeleton)
+            return json_skeleton
         except Exception as e:
             error(e)
             return []
 
     def __tag_file_stack(self):
         in_dir = self.conf.in_dir
-
+        all_pdf_files = list_sub_dirs(in_dir)
+        for pdf_file in all_pdf_files:
+            pdf_pages = list_sub_dirs(pdf_file)
+            for page in pdf_pages:
+                txt_files = walk_dir(page, file_type='txt')
+                for txt in txt_files:
+                    print(txt)
+                    json_obj = self.__tag_file_tree_tagger(txt, self.conf.lang)
+                    fname = os.path.basename(txt)
+                    dump_obj_to_json(page, fname[:-4] + '_pos' + '.txt', json_obj)
 
     # TODO: Run function.
     def run(self):
-        pass
+        self.__tag_file_stack()

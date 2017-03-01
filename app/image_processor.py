@@ -14,8 +14,8 @@ from os.path import join
 import numpy as np
 from skimage import io
 from skimage.transform import rotate
-from .utility import list_sub_dirs
-from .utility import walk_dir
+from .helpers import list_sub_dirs
+from .helpers import walk_dir
 
 from app.config import Config
 

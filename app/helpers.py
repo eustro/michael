@@ -107,7 +107,7 @@ def create_file(path: str, file_name: str, encoding='utf-8'):
         return None
 
 
-def obj_to_json(out_path: str, file_name: str, obj: object) -> bool:
+def dump_obj_to_json(out_path: str, file_name: str, obj: object) -> bool:
     """
     Dumps Python object to a json file.
     Returns True on sucess.
@@ -130,7 +130,7 @@ def obj_to_json(out_path: str, file_name: str, obj: object) -> bool:
         return False
 
 
-def json_to_obj(file_path: str) -> bool:
+def read_json_to_obj(file_path: str) -> bool:
     """
     Loads a Python object from a json file.
     Returns True on sucess.
