@@ -10,8 +10,8 @@ from os.path import basename
 from os.path import dirname
 
 from skimage.io import imread
-from utility import list_sub_dirs
-from utility import walk_dir
+from .utility import list_sub_dirs
+from .utility import walk_dir
 
 from app.config import Config
 

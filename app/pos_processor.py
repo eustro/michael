@@ -8,7 +8,7 @@ Uses tree-tagger chunker, tagger and lemmatizer on text files.
 import json
 from logging import error
 
-from utility import open_file
+from .utility import open_file
 
 from app.config import Config
 

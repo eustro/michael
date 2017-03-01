@@ -3,10 +3,10 @@
 import argparse
 import sys
 
-from chronicle_processor import ChronicleProcessor
-from image_processor import ImageProcessor
-from ocr_processor import OCRProcessor
-from pdf_processor import PDFProcessor
+from app.chronicle_processor import ChronicleProcessor
+from app.image_processor import ImageProcessor
+from app.ocr_processor import OCRProcessor
+from app.pdf_processor import PDFProcessor
 
 from app.config import Config
 
