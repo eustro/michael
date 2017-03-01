@@ -108,15 +108,15 @@ class ImageProcessor:
 
         text_images = []
 
-        hor_cuts = self.__detect_text_boxes(image)
+        horizontal_cuts = self.__detect_text_boxes(image)
 
-        if not hor_cuts:
+        if not horizontal_cuts:
             return [image]
 
-        if len(hor_cuts) > params['max_no_of_hor_cuts']:
+        if len(horizontal_cuts) > params['max_no_of_hor_cuts']:
             return [image]
 
-        for hor_cut in hor_cuts:
+        for hor_cut in horizontal_cuts:
 
             x_in, x_out = hor_cut
 
@@ -126,17 +126,17 @@ class ImageProcessor:
             if abs(x_out - x_in) < image.shape[0] * params['filter_small_hor']:
                 continue
 
-            hor_image = image[x_in:x_out][:]
-            ver_cuts = self.__detect_text_boxes(hor_image, horizontal=True)
+            horizontal_image = image[x_in:x_out][:]
+            vertical_cuts = self.__detect_text_boxes(horizontal_image, horizontal=True)
 
-            if not ver_cuts:
-                text_images.append(hor_image)
+            if not vertical_cuts:
+                text_images.append(horizontal_image)
 
-            if len(ver_cuts) > params['max_no_of_ver_cuts']:
-                text_images.append(hor_image)
+            if len(vertical_cuts) > params['max_no_of_ver_cuts']:
+                text_images.append(horizontal_image)
                 continue
 
-            for ver_cut in ver_cuts:
+            for ver_cut in vertical_cuts:
 
                 y_in, y_out = ver_cut
 
@@ -144,12 +144,12 @@ class ImageProcessor:
                 y_out = int(y_out)
 
                 if abs(y_out - y_in) < image.shape[1] * params['filter_small_ver']:
-                    text_images.append(hor_image)
+                    text_images.append(horizontal_image)
                     continue
 
-                ver_image = hor_image[:, y_in:y_out]
+                vertical_image = horizontal_image[:, y_in:y_out]
 
-                text_images.append(ver_image)
+                text_images.append(vertical_image)
 
         return text_images
 

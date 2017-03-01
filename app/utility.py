@@ -49,7 +49,7 @@ def clear_dir(path: str, del_sudirs=False, file_ext=None) -> bool:
     Removes specified file types.
     Removes also all subdirectories if set to True.
     """
-    if not file_ext:
+    if not file_ext or not isinstance(file_ext, list):
         file_ext = []
     for dirpath, subdirs, filenames in walk(path, topdown=False):
         file_paths = [join(dirpath, a_file) for a_file in filenames]

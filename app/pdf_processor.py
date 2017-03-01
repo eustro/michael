@@ -30,7 +30,7 @@ class PDFProcessor:
             logging.error(e)
         if listdir(new_dir):
             logging.error('{0} is not empty'.format(new_dir))
-            clear_dir(new_dir)
+            clear_dir(new_dir, file_ext=['.png'])
         system('gs -q -dSAFER -sDEVICE=pngmono -r{0} -dBATCH -dNOPAUSE -sOutputFile={1}%d.png {2}'
                .format(dpi, join(out_dir, dir_name) + '/', pdf_path))
 

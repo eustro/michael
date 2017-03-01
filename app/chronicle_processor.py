@@ -60,13 +60,13 @@ class ChronicleProcessor:
             if images[2]['image'].shape[1] / original_size[1] >= 0.5:
                 text_fragments['political'].append(images[2]['box'])
             else:
-                text_fragments['eccles'].append(images[2]['box'])
+                text_fragments['secular'].append(images[2]['box'])
 
             # Arrange secular part
             if images[1]['image'].shape[1] / original_size[1] >= 0.5:
                 text_fragments['political'].append(images[1]['box'])
             else:
-                text_fragments['secular'].append(images[1]['box'])
+                text_fragments['eccles'].append(images[1]['box'])
 
             # Arrange political part
             text_fragments['political'].append(images[0]['box'])
