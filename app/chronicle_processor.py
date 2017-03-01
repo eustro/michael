@@ -4,14 +4,16 @@
 Arranges the four major text parts of the chronicle.
 """
 
-from os.path import dirname
-from os.path import basename
-from os import rename
 from logging import error
+from os import rename
+from os.path import basename
+from os.path import dirname
+
 from skimage.io import imread
-from utility import walk_dir
 from utility import list_sub_dirs
-from config import Config
+from utility import walk_dir
+
+from app.config import Config
 
 
 class ChronicleProcessor:

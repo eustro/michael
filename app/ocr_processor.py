@@ -5,11 +5,13 @@
 Module for tesseract ocr. Uses default system tesseract installation.
 """
 
-import os
 import logging
+import os
+
 from utility import list_sub_dirs
 from utility import walk_dir
-from config import Config
+
+from app.config import Config
 
 
 class OCRProcessor:

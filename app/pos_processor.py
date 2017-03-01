@@ -5,14 +5,12 @@
 Uses tree-tagger chunker, tagger and lemmatizer on text files.
 """
 
-from logging import error
 import json
-from utility import list_sub_dirs
-from utility import walk_dir
-from utility import open_file
-from utility import obj_to_json
+from logging import error
 
-from config import Config
+from utility import open_file
+
+from app.config import Config
 
 
 # TODO: Stanford NLP could also be implemented.

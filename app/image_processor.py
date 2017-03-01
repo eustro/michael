@@ -5,17 +5,19 @@
 Module provides optical text box recognition in image files.
 """
 
+import logging
 from os import mkdir
-from os.path import join
 from os.path import basename
 from os.path import exists
-import logging
+from os.path import join
+
 import numpy as np
 from skimage import io
 from skimage.transform import rotate
-from utility import walk_dir
 from utility import list_sub_dirs
-from config import Config
+from utility import walk_dir
+
+from app.config import Config
 
 
 # TODO: Check, if algorithm can be changed/extended to detect L-forms in texts.

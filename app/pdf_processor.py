@@ -1,15 +1,17 @@
 # coding=utf-8
 
 
+import logging
+from os import listdir
 from os import mkdir
 from os import system
-from os.path import join
 from os.path import basename
-from os import listdir
-import logging
-from utility import walk_dir
+from os.path import join
+
 from utility import clear_dir
-from config import Config
+from utility import walk_dir
+
+from app.config import Config
 
 
 class PDFProcessor:

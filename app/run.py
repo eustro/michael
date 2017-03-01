@@ -3,11 +3,12 @@
 import argparse
 import sys
 
-from config import Config
-from pdf_processor import PDFProcessor
-from image_processor import ImageProcessor
 from chronicle_processor import ChronicleProcessor
+from image_processor import ImageProcessor
 from ocr_processor import OCRProcessor
+from pdf_processor import PDFProcessor
+
+from app.config import Config
 
 parser = argparse.ArgumentParser(prog='PDFCrop')
 parser.add_argument('--dump_conf', help='Dump default config as json files.', action='store_true')

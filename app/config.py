@@ -5,8 +5,8 @@ from os.path import dirname
 from os.path import join
 from os.path import realpath
 
-from utility import json_to_obj
-from utility import obj_to_json
+from app.utility import json_to_obj
+from app.utility import obj_to_json
 
 
 # TODO: Refactor dump statements, put them in constructor.
