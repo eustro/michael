@@ -12,6 +12,7 @@ from utility import obj_to_json
 # TODO: Refactor dump statements, put them in constructor.
 # TODO: Do not use class variables to get params, use function call.
 # TODO: Make derivations of class for each config section. Abstract class -> etc.
+
 class Config:
     """
     Class holds all config files for the application.
@@ -52,6 +53,23 @@ class Config:
         self.params_text_cut = self.set_params_text_cut()
         self.params_ocr = self.set_params_ocr()
         self.params_chronicle = self.set_params_chronicle()
+
+        if self.dump_conf:
+            obj_to_json(self.config_dir,
+                        Config.config_file_names['params_text_box'],
+                        self.params_text_box)
+
+            obj_to_json(self.config_dir,
+                        Config.config_file_names['params_text_cut'],
+                        self.params_text_cut)
+
+            obj_to_json(self.config_dir,
+                        Config.config_file_names['params_ocr'],
+                        self.params_ocr)
+
+            obj_to_json(self.config_dir,
+                        Config.config_file_names['params_chronicle'],
+                        self.params_chronicle)
 
     def read_config_files(self) -> dict:
         """
@@ -124,11 +142,6 @@ class Config:
             params['correction_left'] *= ratio
             params['correction_right'] *= ratio
 
-        if self.dump_conf:
-            obj_to_json(self.config_dir,
-                        Config.config_file_names['params_text_box'],
-                        params)
-
         return params
 
     def set_params_text_cut(self) -> dict:
@@ -145,11 +158,6 @@ class Config:
                   'max_no_of_hor_cuts': 10,
                   'max_no_of_ver_cuts': 3}
 
-        if self.dump_conf:
-            obj_to_json(self.config_dir,
-                        Config.config_file_names['params_text_cut'],
-                        params)
-
         return params
 
     def set_params_ocr(self) -> dict:
@@ -164,11 +172,6 @@ class Config:
         params = {'tess_dir': '/opt/local/share',
                   'lan': 'fra',
                   'page_mode': 3}
-
-        if self.dump_conf:
-            obj_to_json(self.config_dir,
-                        Config.config_file_names['params_ocr'],
-                        params)
 
         return params
 
@@ -191,11 +194,6 @@ class Config:
                   'secular': 3,
                   # Lower part
                   'footnotes': 4}
-
-        if self.dump_conf:
-            obj_to_json(self.config_dir,
-                        Config.config_file_names['params_chronicle'],
-                        params)
 
         return params
 

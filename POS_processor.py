@@ -10,6 +10,7 @@ import json
 from utility import list_sub_dirs
 from utility import walk_dir
 from utility import open_file
+from utility import obj_to_json
 
 from config import Config
 
@@ -21,7 +22,9 @@ class NLPProcessor:
             raise TypeError('Need instance of Config class!')
         self.conf = conf
 
-    def __tag_file(self, path: str, lang: str) -> list:
+# TODO: Add config class
+# TODO: Dump tags to json file to read later.
+    def __tag_file_tree_tagger(self, path: str, lang: str) -> list:
         """
         @path: path of file.
         @lang: language to be used for tagging.
