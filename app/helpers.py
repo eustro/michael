@@ -100,7 +100,7 @@ def create_file(path: str, file_name: str, encoding='utf-8'):
         fp = open_file(file_path)
         return fp
     try:
-        fp = open(file_path, mode='w', encoding=encoding)
+        fp = open(file_path, mode='x', encoding=encoding)
         return fp
     except IOError as io:
         error(io)

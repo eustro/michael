@@ -15,7 +15,7 @@ from .helpers import dump_obj_to_json
 
 from app.config import Config
 
-
+# TODO: Change triple loop, use a recursive search through path.
 # TODO: Stanford NLP could also be implemented.
 class POSProcessor:
     def __init__(self, conf):
@@ -44,9 +44,13 @@ class POSProcessor:
         fp = open_file(path)
         if not fp:
             return []
-        txt = fp.read()
-        fp.close()
-        tagger = TreeTagger(TAGLANG=lang)
+        try:
+            txt = fp.read()
+            fp.close()
+        except Exception as e:
+            error(e)
+            return []
+        tagger = TreeTagger(TAGLANG=lang, TAGDIR='/Users/eugenstroh/TreeTagger')
         tags = tagger.tag_text(txt)
         tags = make_tags(tags)
         if not tags:
@@ -63,6 +67,9 @@ class POSProcessor:
             error(e)
             return []
 
+    def __tag_file_stanford_tagger(self, path: str, lang: str) -> list:
+        pass
+
     def __tag_file_stack(self):
         in_dir = self.conf.in_dir
         all_pdf_files = list_sub_dirs(in_dir)
@@ -71,10 +78,15 @@ class POSProcessor:
             for page in pdf_pages:
                 txt_files = walk_dir(page, file_type='txt')
                 for txt in txt_files:
-                    print(txt)
-                    json_obj = self.__tag_file_tree_tagger(txt, self.conf.lang)
                     fname = os.path.basename(txt)
-                    dump_obj_to_json(page, fname[:-4] + '_pos' + '.txt', json_obj)
+                    if 'pos' in fname:
+                        # Truncate _pos.txt
+                        fname = fname[:-8]
+                    else:
+                        # Truncate .txt
+                        fname = fname[:-4]
+                    json_obj = self.__tag_file_tree_tagger(txt, self.conf.lang)
+                    dump_obj_to_json(page, fname + '_pos' + '.txt', json_obj)
 
     # TODO: Run function.
     def run(self):

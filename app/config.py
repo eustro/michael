@@ -26,7 +26,7 @@ class Config:
     def __init__(self,
                  in_dir,
                  out_dir,
-                 lang='en',
+                 lang='fr',
                  pdf_dpi='300',
                  image_type='png',
                  config_dir=dirname(realpath(__file__)),
