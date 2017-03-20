@@ -154,7 +154,7 @@ class Config:
         params = {'filter_small_hor': 0.035,
                   'filter_small_ver': 0.15,
                   'max_no_of_hor_cuts': 10,
-                  'max_no_of_ver_cuts': 3}
+                  'max_no_of_ver_cuts': 2}
 
         return params
 
