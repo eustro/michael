@@ -15,6 +15,7 @@ from .helpers import dump_obj_to_json
 
 from app.config import Config
 
+
 # TODO: Change triple loop, use a recursive search through path.
 # TODO: Stanford NLP could also be implemented.
 class POSProcessor:
@@ -23,8 +24,6 @@ class POSProcessor:
             raise TypeError('Need instance of Config class!')
         self.conf = conf
 
-# TODO: Add config class
-# TODO: Dump tags to json file to read later.
     def __tag_file_tree_tagger(self, path: str, lang: str) -> list:
         """
         @path: path of file.
@@ -50,6 +49,7 @@ class POSProcessor:
         except Exception as e:
             error(e)
             return []
+        # TODO: Find a way to include treetagger location.
         tagger = TreeTagger(TAGLANG=lang, TAGDIR='/Users/eugenstroh/TreeTagger')
         tags = tagger.tag_text(txt)
         tags = make_tags(tags)
@@ -79,6 +79,7 @@ class POSProcessor:
                 txt_files = walk_dir(page, file_type='txt')
                 for txt in txt_files:
                     fname = os.path.basename(txt)
+                    # Overwrite file, if exists.
                     if 'pos' in fname:
                         # Truncate _pos.txt
                         fname = fname[:-8]

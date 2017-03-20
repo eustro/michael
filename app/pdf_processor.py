@@ -4,7 +4,8 @@
 import logging
 from os import listdir
 from os import mkdir
-from os import system
+from os import name
+from subprocess import call
 from os.path import basename
 from os.path import join
 
@@ -31,8 +32,12 @@ class PDFProcessor:
         if listdir(new_dir):
             logging.error('{0} is not empty'.format(new_dir))
             clear_dir(new_dir, file_ext=['.png'])
-        system('gs -q -dSAFER -sDEVICE=pngmono -r{0} -dBATCH -dNOPAUSE -sOutputFile={1}%d.png {2}'
-               .format(dpi, join(out_dir, dir_name) + '/', pdf_path))
+        if name == 'posix':
+            gs_command = 'gs'
+        else:
+            gs_command = 'gswin64.exe'
+        call('{0} -q -dSAFER -sDEVICE=pngmono -r{1} -dBATCH -dNOPAUSE -sOutputFile={2}%d.png {3}'
+             .format(gs_command, dpi, join(out_dir, dir_name) + '/', pdf_path))
 
         return True
 

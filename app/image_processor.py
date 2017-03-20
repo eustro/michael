@@ -145,7 +145,7 @@ class ImageProcessor:
 
                 if abs(y_out - y_in) < image.shape[1] * params['filter_small_ver']:
                     text_images.append(horizontal_image)
-                    continue
+                    break
 
                 vertical_image = horizontal_image[:, y_in:y_out]
 
