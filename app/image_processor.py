@@ -138,18 +138,17 @@ class ImageProcessor:
                 text_images.append(horizontal_image)
                 continue
 
-            print(y_in, y_out, image.shape[1] * params['filter_small_ver'])
-            if abs(y_out - y_in) < image.shape[1] * params['filter_small_ver']:
-                print('skipping vert cut...')
-                text_images.append(horizontal_image)
-                continue
-
             for ver_cut in vertical_cuts:
 
                 y_in, y_out = ver_cut
 
                 y_in = int(y_in)
                 y_out = int(y_out)
+                print(y_in, y_out, image.shape[1] * params['filter_small_ver'])
+                if abs(y_out - y_in) < image.shape[1] * params['filter_small_ver']:
+                    print('skipping vert cut...')
+                    text_images.append(horizontal_image)
+                    continue
 
                 vertical_image = horizontal_image[:, y_in:y_out]
 
