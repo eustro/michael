@@ -90,5 +90,5 @@ class POSProcessor:
                     dump_obj_to_json(page, fname + '_pos' + '.txt', json_obj)
 
     # TODO: Run function.
-    def run(self):
+    def run(self) -> None:
         self.__tag_file_stack()

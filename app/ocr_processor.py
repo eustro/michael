@@ -57,5 +57,5 @@ class OCRProcessor:
                     self.__ocr_on_image(png)
         return True
 
-    def run(self):
+    def run(self) -> None:
         self.__ocr_on_image_stack()

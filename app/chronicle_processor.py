@@ -140,5 +140,5 @@ class ChronicleProcessor:
             self.__process_page(sub_dir)
         return True
 
-    def run(self):
+    def run(self) -> None:
         self.__process_chronicle()

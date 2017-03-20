@@ -28,6 +28,7 @@ class ImageProcessor:
         self.conf = conf
 
     def __detect_text_boxes(self, image: np.ndarray, horizontal=False) -> list:
+        from skimage.transform import rotate
         if image.ndim > 2 or 0 in image.shape:
             return []
 
@@ -234,5 +235,5 @@ class ImageProcessor:
 
         return True
 
-    def run(self):
+    def run(self) -> None:
         self.__process_image_stack()

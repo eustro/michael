@@ -2,12 +2,6 @@
 
 
 import logging
-from os import listdir
-from os import mkdir
-from os import name
-from subprocess import call
-from os.path import basename
-from os.path import join
 
 from .helpers import clear_dir
 from .helpers import walk_dir
@@ -22,6 +16,15 @@ class PDFProcessor:
         self.conf = conf
 
     def __pdf_to_image(self, pdf_path: str, dpi: str):
+        from os import listdir
+        from os import mkdir
+        from os import name
+        from os import system
+        from subprocess import call
+
+        from os.path import basename
+        from os.path import join
+
         out_dir = self.conf.out_dir
         dir_name = basename(pdf_path).split('.')[0]
         new_dir = join(out_dir, dir_name)
@@ -36,8 +39,8 @@ class PDFProcessor:
             gs_command = 'gs'
         else:
             gs_command = 'gswin64.exe'
-        call('{0} -q -dSAFER -sDEVICE=pngmono -r{1} -dBATCH -dNOPAUSE -sOutputFile={2}%d.png {3}'
-             .format(gs_command, dpi, join(out_dir, dir_name) + '/', pdf_path))
+        system('{0} -q -dSAFER -sDEVICE=pngmono -r{1} -dBATCH -dNOPAUSE -sOutputFile={2}%d.png {3}'
+               .format(gs_command, dpi, join(out_dir, dir_name) + '/', pdf_path))
 
         return True
 
@@ -59,5 +62,5 @@ class PDFProcessor:
 
         return True
 
-    def run(self):
+    def run(self) -> None:
         self.__process_pdf_stack()
