@@ -27,7 +27,7 @@ class ImageProcessor:
             raise TypeError('Need instance of Config class!')
         self.conf = conf
 
-    def __detect_text_boxes(self, image: np.ndarray, horizontal=False) -> list:
+    def __detect_text_boxes(self, image: np.ndarray, vertical=False) -> list:
         from skimage.transform import rotate
         if image.ndim > 2 or 0 in image.shape:
             return []
@@ -36,10 +36,10 @@ class ImageProcessor:
 
         dim1, dim2 = image.shape
 
-        if horizontal and max(dim1, dim2) / min(dim1, dim2) > params['min_crop_ratio']:
+        if vertical and max(dim1, dim2) / min(dim1, dim2) > params['min_crop_ratio']:
             return []
 
-        if horizontal:
+        if vertical:
             image_copy = rotate(image, 270, resize=True)
         else:
             image_copy = image
@@ -80,7 +80,7 @@ class ImageProcessor:
                         state_in = False
                         entry_p = cut_positions[-1][0]
                         exit_p = row
-                        if horizontal:
+                        if vertical:
                             cut_positions[-1] = (entry_p + params['correction_left'],
                                                  exit_p + params['correction_right'])
                         else:
@@ -128,10 +128,11 @@ class ImageProcessor:
                 continue
 
             horizontal_image = image[x_in:x_out][:]
-            vertical_cuts = self.__detect_text_boxes(horizontal_image, horizontal=True)
+            vertical_cuts = self.__detect_text_boxes(horizontal_image, vertical=True)
 
             if not vertical_cuts:
                 text_images.append(horizontal_image)
+                continue
 
             if len(vertical_cuts) > params['max_no_of_ver_cuts']:
                 text_images.append(horizontal_image)
@@ -145,8 +146,9 @@ class ImageProcessor:
                 y_out = int(y_out)
 
                 if abs(y_out - y_in) < image.shape[1] * params['filter_small_ver']:
+                    print(y_in, y_out, image.shape[1] * params['filter_small_ver'])
                     text_images.append(horizontal_image)
-                    break
+                    continue
 
                 vertical_image = horizontal_image[:, y_in:y_out]
 
