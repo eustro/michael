@@ -61,3 +61,6 @@ target/
 
 # Paramters
 params_*
+
+# IDEA
+.idea*
