@@ -33,7 +33,7 @@ process_order = ('pdf', 'image', 'chronicle', 'ocr', 'nlp', 'draw')
 args = parser.parse_args()
 
 
-def main() -> None:
+def main():
     conf = Config(args.inp, args.out)
 
     if args.config_dir:
