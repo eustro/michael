@@ -2,7 +2,6 @@
 
 import argparse
 import logging
-import sys
 
 from app.chronicle_processor import ChronicleProcessor
 from app.image_processor import ImageProcessor
