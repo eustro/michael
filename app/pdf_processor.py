@@ -35,10 +35,7 @@ class PDFProcessor:
         if listdir(new_dir):
             logging.error('{0} is not empty'.format(new_dir))
             clear_dir(new_dir, file_ext=['.png'])
-        if name == 'posix':
-            gs_command = 'gs'
-        else:
-            gs_command = 'gswin64.exe'
+        gs_command = 'gs'
         system('{0} -q -dSAFER -sDEVICE=pngmono -r{1} -dBATCH -dNOPAUSE -sOutputFile={2}%d.png {3}'
                .format(gs_command, dpi, join(out_dir, dir_name) + '/', pdf_path))
 

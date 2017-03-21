@@ -13,11 +13,11 @@ from os.path import join
 
 import numpy as np
 from skimage import io
-from skimage.transform import rotate
 from .helpers import list_sub_dirs
 from .helpers import walk_dir
 
 from app.config import Config
+from app.decorators import asynchronous
 
 
 # TODO: Check, if algorithm can be changed/extended to detect L-forms in texts.
@@ -111,12 +111,15 @@ class ImageProcessor:
 
         horizontal_cuts = self.__detect_text_boxes(image)
 
+        # If not boxes detected, leave image as it is.
         if not horizontal_cuts:
             return [image]
 
+        # If too many cuts detected, leave image as it is.
         if len(horizontal_cuts) > params['max_no_of_hor_cuts']:
             return [image]
 
+        # If any reasonable cuts detected, crop image.
         for hor_cut in horizontal_cuts:
 
             x_in, x_out = hor_cut
@@ -124,20 +127,26 @@ class ImageProcessor:
             x_in = int(x_in)
             x_out = int(x_out)
 
+            # If crops too small, don't cut.
             if abs(x_out - x_in) < image.shape[0] * params['filter_small_hor']:
                 continue
 
+            # Cut image.
             horizontal_image = image[x_in:x_out][:]
+            # Now see, if any vertical cuts can be made.
             vertical_cuts = self.__detect_text_boxes(horizontal_image, vertical=True)
 
+            # If no vertical cuts detected, use horizontal cuts.
             if not vertical_cuts:
                 text_images.append(horizontal_image)
                 continue
 
+            # If too many cuts detected, don't do anything.
             if len(vertical_cuts) > params['max_no_of_ver_cuts']:
                 text_images.append(horizontal_image)
                 continue
 
+            # Process vertical cuts.
             for ver_cut in vertical_cuts:
 
                 y_in, y_out = ver_cut
@@ -171,6 +180,7 @@ class ImageProcessor:
             logging.error(e)
             return False
 
+    @asynchronous
     def __process_image(self, image: np.ndarray, out_dir: str, page_no: str, file_type='png') -> bool:
         path = join(out_dir, page_no)
 
