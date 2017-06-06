@@ -8,8 +8,8 @@ Module for tesseract ocr. Uses default system tesseract installation.
 import logging
 import os
 
-from .helpers import list_sub_dirs
-from .helpers import walk_dir
+from .util import list_sub_dirs
+from .util import walk_dir
 
 from app.config import Config
 

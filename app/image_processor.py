@@ -13,14 +13,13 @@ from os.path import join
 
 import numpy as np
 from skimage import io
-from .helpers import list_sub_dirs
-from .helpers import walk_dir
+from .util import list_sub_dirs
+from .util import walk_dir
 
 from app.config import Config
 from app.decorators import asynchronous
 
 
-# TODO: Check, if algorithm can be changed/extended to detect L-forms in texts.
 class ImageProcessor:
     def __init__(self, conf):
         if not isinstance(conf, Config) or not conf:
@@ -44,21 +43,18 @@ class ImageProcessor:
         else:
             image_copy = image
 
-        state_in = False
-        state_out = True
+        state_in, state_out = False, True
 
         curr_white_lines = 0
 
         cut_positions = []
 
-        for row in range(params['vertical_margin'],
-                         image_copy.shape[0] - params['vertical_margin']):
+        for row in range(params['vertical_margin'], image_copy.shape[0] - params['vertical_margin']):
 
             black_pixel = 0
             white_pixel = 0
 
-            for col in range(params['horizontal_margin'],
-                             image_copy.shape[1] - params['horizontal_margin']):
+            for col in range(params['horizontal_margin'], image_copy.shape[1] - params['horizontal_margin']):
 
                 if state_in:
 
@@ -76,8 +72,7 @@ class ImageProcessor:
 
                     if curr_white_lines >= params['min_white_lines']:
                         curr_white_lines = 0
-                        state_out = True
-                        state_in = False
+                        state_out, state_in = True, False
                         entry_p = cut_positions[-1][0]
                         exit_p = row
                         if vertical:

@@ -3,8 +3,8 @@
 
 import logging
 
-from .helpers import clear_dir
-from .helpers import walk_dir
+from .util import clear_dir
+from .util import walk_dir
 
 from app.config import Config
 

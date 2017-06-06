@@ -5,8 +5,8 @@ from os.path import dirname
 from os.path import join
 from os.path import realpath
 
-from app.helpers import read_json_to_obj
-from app.helpers import dump_obj_to_json
+from app.util import read_json_to_obj
+from app.util import dump_obj_to_json
 
 
 class Config:

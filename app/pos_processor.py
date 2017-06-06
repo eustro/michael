@@ -8,16 +8,15 @@ Uses tree-tagger chunker, tagger and lemmatizer on text files.
 import os
 from logging import error
 
-from .helpers import open_file
-from .helpers import list_sub_dirs
-from .helpers import walk_dir
-from .helpers import dump_obj_to_json
+from .util import open_file
+from .util import list_sub_dirs
+from .util import walk_dir
+from .util import dump_obj_to_json
 
 from app.config import Config
 
 
 # TODO: Change triple loop, use a recursive search through path.
-# TODO: Stanford NLP could also be implemented.
 class POSProcessor:
     def __init__(self, conf):
         if not isinstance(conf, Config) or not conf:
