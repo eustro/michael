@@ -16,14 +16,13 @@ from .util import dump_obj_to_json
 from app.config import Config
 
 
-# TODO: Change triple loop, use a recursive search through path.
 class POSProcessor:
     def __init__(self, conf):
         if not isinstance(conf, Config) or not conf:
             raise TypeError('Need instance of Config class!')
         self.conf = conf
 
-    def __tag_file_tree_tagger(self, path: str, lang: str) -> list:
+    def __tag_file_tree_tagger(self, path: str, lang: str, tree_tagger_dir: str) -> list:
         """
         @path: path of file.
         @lang: language to be used for tagging.
@@ -69,12 +68,13 @@ class POSProcessor:
     def __tag_file_stanford_tagger(self, path: str, lang: str) -> list:
         pass
 
+    # TODO: Change triple loop, use a recursive search through path.
     def __tag_file_stack(self):
         in_dir = self.conf.in_dir
-        all_pdf_files = list_sub_dirs(in_dir)
-        for pdf_file in all_pdf_files:
-            pdf_pages = list_sub_dirs(pdf_file)
-            for page in pdf_pages:
+        all_docs = list_sub_dirs(in_dir)
+        for doc in all_docs:
+            doc_page = list_sub_dirs(doc)
+            for page in doc_page:
                 txt_files = walk_dir(page, file_type='txt')
                 for txt in txt_files:
                     fname = os.path.basename(txt)
@@ -85,9 +85,8 @@ class POSProcessor:
                     else:
                         # Truncate .txt
                         fname = fname[:-4]
-                    json_obj = self.__tag_file_tree_tagger(txt, self.conf.lang)
+                    json_obj = self.__tag_file_tree_tagger(txt, self.conf.lang, tree_tagger_dir='')
                     dump_obj_to_json(page, fname + '_pos' + '.txt', json_obj)
 
-    # TODO: Run function.
     def run(self) -> None:
         self.__tag_file_stack()

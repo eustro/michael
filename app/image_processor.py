@@ -13,6 +13,8 @@ from os.path import join
 
 import numpy as np
 from skimage import io
+
+from .util import clear_dir
 from .util import list_sub_dirs
 from .util import walk_dir
 
@@ -176,11 +178,11 @@ class ImageProcessor:
             return False
 
     @asynchronous
-    def __process_image(self, image: np.ndarray, out_dir: str, page_no: str, file_type='png') -> bool:
+    def __process_image(self, image: np.ndarray, out_dir: str, page_no: str, image_type: str) -> bool:
         path = join(out_dir, page_no)
 
-        if exists(path) and walk_dir(path, file_type='png'):
-            return True
+        if exists(path) and walk_dir(path, file_type="." + image_type):
+            clear_dir(path, del_sudirs=True, file_ext="." + image_type)
 
         try:
             mkdir(join(out_dir, page_no))
@@ -191,7 +193,7 @@ class ImageProcessor:
         file_name = 1
 
         for text_image in self.__cut_text_from_image(image):
-            fname = str(file_name) + '.' + file_type
+            fname = str(file_name) + '.' + image_type
             self.__save_text_box(text_image, path, fname)
             file_name += 1
 
@@ -228,16 +230,17 @@ class ImageProcessor:
         dirs = list_sub_dirs(in_dir)
 
         if not dirs:
-            return False
+            raise Exception('Path tree seems to invalid in: {0}'.format(in_dir))
 
         for d in dirs:
             image_files = walk_dir(d, image_type)
             if not image_files:
-                return False
+                raise Exception('No image files found in: {0}'.format(d))
 
             for image_path in image_files:
                 image = io.imread(image_path, as_grey=True)
-                self.__process_image(image, d, basename(image_path)[:-4])
+                page_no = basename(image_path).split('.')[1]
+                self.__process_image(image, d, page_no, image_type)
 
         return True
 

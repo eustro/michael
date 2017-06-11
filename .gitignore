@@ -64,3 +64,4 @@ params_*
 
 # IDEA
 .idea*
+!/.gitignore

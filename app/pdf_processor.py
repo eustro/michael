@@ -15,12 +15,10 @@ class PDFProcessor:
             raise TypeError('Need instance of Config class!')
         self.conf = conf
 
-    def __pdf_to_image(self, pdf_path: str, dpi: str):
+    def __pdf_to_image(self, pdf_path: str, dpi: str, image_type: str):
         from os import listdir
         from os import mkdir
-        from os import name
         from os import system
-        from subprocess import call
 
         from os.path import basename
         from os.path import join
@@ -34,10 +32,19 @@ class PDFProcessor:
             logging.error(e)
         if listdir(new_dir):
             logging.error('{0} is not empty'.format(new_dir))
-            clear_dir(new_dir, file_ext=['.png'])
+            clear_dir(new_dir, file_ext=['.png', '.jpg', '.tif', '.tiff'])
         gs_command = 'gs'
-        system('{0} -q -dSAFER -sDEVICE=pngmono -r{1} -dBATCH -dNOPAUSE -sOutputFile={2}%d.png {3}'
-               .format(gs_command, dpi, join(out_dir, dir_name) + '/', pdf_path))
+        file_extension = image_type
+        if file_extension == 'png':
+            device = 'pngmono'
+        elif file_extension in ('tif', 'tiff'):
+            device = 'tiffgray'
+        elif file_extension in ('jpg', 'jpeg'):
+            device = 'jpeggray'
+        else:
+            device = 'pngmono'
+        system('{0} -q -dSAFER -sDEVICE={1} -r{2} -dBATCH -dNOPAUSE -sOutputFile={3}%d.{4} {5}'
+               .format(gs_command, device, dpi, join(out_dir, dir_name) + '/', file_extension, pdf_path))
 
         return True
 
@@ -52,10 +59,11 @@ class PDFProcessor:
         pdf_files = walk_dir(in_dir, file_type='pdf')
 
         if not pdf_files:
-            return False
+            raise Exception('No PDF files found in: {0}'.format(in_dir))
 
+        image_type = self.conf.image_type
         for pdf_path in pdf_files:
-            self.__pdf_to_image(pdf_path, dpi)
+            self.__pdf_to_image(pdf_path, dpi, image_type)
 
         return True
 

@@ -46,15 +46,15 @@ class OCRProcessor:
     def __ocr_on_image_stack(self) -> bool:
         # Read Directories for processed PDF files
         in_dir = self.conf.in_dir
-        pdf_dirs = list_sub_dirs(in_dir)
-        if not pdf_dirs:
-            return False
+        docs = list_sub_dirs(in_dir)
+        if not docs:
+            raise Exception('There are no documents in directory: {0}'.format(in_dir))
         # Read Directories of all pages in a PDF directory
-        for one_page in pdf_dirs:
-            pdf_pages = list_sub_dirs(one_page)
-            for page in pdf_pages:
-                for png in walk_dir(page, file_type='png'):
-                    self.__ocr_on_image(png)
+        for one_doc in docs:
+            all_page_in_doc = list_sub_dirs(one_doc)
+            for page in all_page_in_doc:
+                for image in walk_dir(page, file_type='png'):
+                    self.__ocr_on_image(image)
         return True
 
     def run(self) -> None:

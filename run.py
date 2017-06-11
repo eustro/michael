@@ -12,28 +12,32 @@ from app.pos_processor import POSProcessor
 from app.config import Config
 
 parser = argparse.ArgumentParser(prog='PDFCrop')
-parser.add_argument('--dump_conf', help='Dump default config as json files.', action='store_true')
+
+# Required positional arguments
 parser.add_argument('inp', help='Specify input directory.')
 parser.add_argument('out', help='Specify output directory.')
-parser.add_argument('--lang', help='Specify language to use for OCR and POS tagging.')
-parser.add_argument('--config_dir', help='Specify configuration files, if you have some custom ones.')
-parser.add_argument('--image_type', help='Type of image you want to process.')
-parser.add_argument('--dpi', help='DPI for image converting.', action="store_true")
+parser.add_argument('lang', help='Specify language to use for OCR and POS tagging.')
+parser.add_argument('image_type', help='Type of image you want to process.')
+parser.add_argument('dpi', help='DPI for image converting.', action="store_true")
+
+# At least one of the arguments is required.
 parser.add_argument('--pdf', help='Process pdf files, if not already done.', action="store_true")
 parser.add_argument('--image', help='Process image files from pdf files.', action="store_true")
 parser.add_argument('--chronicle', help='Process chronicle of Michael the Syrian.', action="store_true")
 parser.add_argument('--ocr', help='Run Google Tesseract OCR on data.', action='store_true')
-parser.add_argument('--nlp', help='Run NLP operations on data', action='store_true')
 parser.add_argument('--pos', help='Run POS tagging on data.', action='store_true')
-parser.add_argument('--draw', help='Run matplotlib to show calculations', action='store_true')
 
-process_order = ('pdf', 'image', 'chronicle', 'ocr', 'nlp', 'draw')
+# Optional
+parser.add_argument('--config_dir', help='Specify configuration files, if you have some custom ones.')
+parser.add_argument('--dump_conf', help='Dump default config as json files.', action='store_true')
+
+process_order = ('pdf', 'image', 'chronicle', 'ocr', 'pos')
 
 args = parser.parse_args()
 
 
 def main():
-    conf = Config(args.inp, args.out)
+    conf = Config(args.inp, args.out, args.lang, args.image_type, args.dpi)
 
     if args.config_dir:
         conf.config_dir = args.config_dir
@@ -69,17 +73,15 @@ def main():
     else:
         pos_processor = None
 
-    if args.nlp:
-        pass
-
-    if args.draw:
-        pass
-
     ops = (pdf_processor,
            image_processor,
            order_chronicle,
            ocr_processor,
            pos_processor)
+
+    if not any(ops):
+        print('You must specify at least one of the following: pdf, image, chronicle, ocr or pos!')
+        exit(0)
 
     for o in ops:
         if o:

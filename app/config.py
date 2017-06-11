@@ -24,11 +24,11 @@ class Config:
                          'params_chronicle': 'params_chronicle.json'}
 
     def __init__(self,
-                 in_dir,
-                 out_dir,
-                 lang='fr',
-                 pdf_dpi='300',
-                 image_type='png',
+                 in_dir: str,
+                 out_dir: str,
+                 lang: str,
+                 dpi: str,
+                 image_type: str,
                  config_dir=dirname(realpath(__file__)),
                  dump_conf=False):
         """
@@ -41,7 +41,7 @@ class Config:
         self.in_dir = in_dir
         self.out_dir = out_dir
         self.lang = lang
-        self.pdf_dpi = pdf_dpi
+        self.pdf_dpi = dpi
         self.image_type = image_type
         self.config_dir = config_dir
         self.dump_conf = dump_conf
