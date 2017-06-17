@@ -84,9 +84,9 @@ class POSProcessor:
                         fname = fname[:-8]
                     else:
                         # Truncate .txt
-                        fname = fname[:-4]
+                        fname = str(fname.split('.')[0])
                     json_obj = self.__tag_file_tree_tagger(txt, self.conf.lang, tree_tagger_dir='')
-                    dump_obj_to_json(page, fname + '_pos' + '.txt', json_obj)
+                    dump_obj_to_json(page, fname + '_pos' + '.json', json_obj)
 
     def run(self) -> None:
         self.__tag_file_stack()

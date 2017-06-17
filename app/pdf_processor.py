@@ -19,7 +19,6 @@ class PDFProcessor:
         from os import listdir
         from os import mkdir
         from os import system
-
         from os.path import basename
         from os.path import join
 
@@ -28,10 +27,9 @@ class PDFProcessor:
         new_dir = join(out_dir, dir_name)
         try:
             mkdir(new_dir)
-        except OSError as e:
-            logging.error(e)
+        except OSError:
+            pass
         if listdir(new_dir):
-            logging.error('{0} is not empty'.format(new_dir))
             clear_dir(new_dir, file_ext=['.png', '.jpg', '.tif', '.tiff'])
         gs_command = 'gs'
         file_extension = image_type
@@ -43,8 +41,9 @@ class PDFProcessor:
             device = 'jpeggray'
         else:
             device = 'pngmono'
-        system('{0} -q -dSAFER -sDEVICE={1} -r{2} -dBATCH -dNOPAUSE -sOutputFile={3}%d.{4} {5}'
-               .format(gs_command, device, dpi, join(out_dir, dir_name) + '/', file_extension, pdf_path))
+        cmd = '{0} -q -dSAFER -sDEVICE={1} -r{2} -dBATCH -dNOPAUSE -sOutputFile={3}%d.{4} {5}'\
+            .format(gs_command, device, dpi, join(out_dir, dir_name) + '/', file_extension, pdf_path)
+        system(cmd)
 
         return True
 

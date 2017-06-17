@@ -14,11 +14,11 @@ from app.config import Config
 parser = argparse.ArgumentParser(prog='PDFCrop')
 
 # Required positional arguments
-parser.add_argument('inp', help='Specify input directory.')
-parser.add_argument('out', help='Specify output directory.')
-parser.add_argument('lang', help='Specify language to use for OCR and POS tagging.')
+parser.add_argument('input_dir', help='Specify input directory.')
+parser.add_argument('output_dir', help='Specify output directory.')
+parser.add_argument('language', help='Specify language to use for OCR and POS tagging.')
 parser.add_argument('image_type', help='Type of image you want to process.')
-parser.add_argument('dpi', help='DPI for image converting.', action="store_true")
+parser.add_argument('dpi', help='DPI for image converting.')
 
 # At least one of the arguments is required.
 parser.add_argument('--pdf', help='Process pdf files, if not already done.', action="store_true")
@@ -28,7 +28,7 @@ parser.add_argument('--ocr', help='Run Google Tesseract OCR on data.', action='s
 parser.add_argument('--pos', help='Run POS tagging on data.', action='store_true')
 
 # Optional
-parser.add_argument('--config_dir', help='Specify configuration files, if you have some custom ones.')
+parser.add_argument('--conf_dir', help='Specify configuration files directory, if you have some custom ones.')
 parser.add_argument('--dump_conf', help='Dump default config as json files.', action='store_true')
 
 process_order = ('pdf', 'image', 'chronicle', 'ocr', 'pos')
@@ -37,10 +37,14 @@ args = parser.parse_args()
 
 
 def main():
-    conf = Config(args.inp, args.out, args.lang, args.image_type, args.dpi)
+    conf = Config(in_dir=args.input_dir,
+                  out_dir=args.output_dir,
+                  lang=args.language,
+                  dpi=args.dpi,
+                  image_type=args.image_type)
 
-    if args.config_dir:
-        conf.config_dir = args.config_dir
+    if args.conf_dir:
+        conf.conf_dir = args.conf_dir
     if args.image_type:
         conf.immage_type = args.image_type
     if args.dpi:

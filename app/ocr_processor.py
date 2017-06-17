@@ -28,7 +28,7 @@ class OCRProcessor:
             return False
 
         dir_name = os.path.dirname(image_path)
-        file_name = os.path.basename(image_path)[:-4]
+        file_name = str(os.path.basename(image_path).split('.')[0])
 
         try:
             os.chdir(dir_name)
@@ -47,13 +47,14 @@ class OCRProcessor:
         # Read Directories for processed PDF files
         in_dir = self.conf.in_dir
         docs = list_sub_dirs(in_dir)
+        file_type = self.conf.image_type
         if not docs:
             raise Exception('There are no documents in directory: {0}'.format(in_dir))
         # Read Directories of all pages in a PDF directory
         for one_doc in docs:
             all_page_in_doc = list_sub_dirs(one_doc)
             for page in all_page_in_doc:
-                for image in walk_dir(page, file_type='png'):
+                for image in walk_dir(page, file_type=file_type):
                     self.__ocr_on_image(image)
         return True
 

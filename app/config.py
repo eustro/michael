@@ -20,8 +20,7 @@ class Config:
     config_file_names = {'params_text_box': 'params_text_box.json',
                          'params_text_cut': 'params_text_cut.json',
                          'params_ocr': 'params_ocr.json',
-                         'params_tagger': 'params_tagger.json',
-                         'params_chronicle': 'params_chronicle.json'}
+                         'params_tagger': 'params_tagger.json'}
 
     def __init__(self,
                  in_dir: str,
@@ -50,7 +49,6 @@ class Config:
         self.params_text_box = self.set_params_text_box()
         self.params_text_cut = self.set_params_text_cut()
         self.params_ocr = self.set_params_ocr()
-        self.params_chronicle = self.set_params_chronicle()
 
         if self.dump_conf:
             dump_obj_to_json(self.config_dir,
@@ -64,10 +62,6 @@ class Config:
             dump_obj_to_json(self.config_dir,
                              Config.config_file_names['params_ocr'],
                              self.params_ocr)
-
-            dump_obj_to_json(self.config_dir,
-                             Config.config_file_names['params_chronicle'],
-                             self.params_chronicle)
 
     def read_config_files(self) -> dict:
         """
@@ -118,10 +112,10 @@ class Config:
                   'min_black_lines': 0.001875,
                   'min_crop_ratio': 11.0,
 
-                  'correction_upper': -10,
-                  'correction_lower': -5,
-                  'correction_left': -15,
-                  'correction_right': +15,
+                  'correction_upper': -20,
+                  'correction_lower': -20,
+                  'correction_left': -20,
+                  'correction_right': +20,
 
                   'vertical_margin': int(0.01 * float(dim_2)),
                   'horizontal_margin': int(0.01 * float(dim_1))}
@@ -170,28 +164,6 @@ class Config:
         params = {'tess_dir': '/opt/local/share',
                   'lan': 'fra',
                   'page_mode': 3}
-
-        return params
-
-    def set_params_chronicle(self):
-        if self.config_files['params_chronicle']:
-            return self.config_files['params_chronicle']
-
-        params = {'width_ratio': 0.5,
-                  # DIN A4 PDF page.
-                  'length_res': 0,
-                  'width_res': 1,
-                  # Regular pages with 4 major parts.
-                  'parts_4': 4,
-                  'parts_5': 5,
-                  # Upper part
-                  'political': 1,
-                  # Left column
-                  'eccles': 2,
-                  # Right column
-                  'secular': 3,
-                  # Lower part
-                  'footnotes': 4}
 
         return params
 

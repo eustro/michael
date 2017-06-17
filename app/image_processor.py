@@ -19,7 +19,6 @@ from .util import list_sub_dirs
 from .util import walk_dir
 
 from app.config import Config
-from app.decorators import asynchronous
 
 
 class ImageProcessor:
@@ -52,12 +51,8 @@ class ImageProcessor:
         cut_positions = []
 
         for row in range(params['vertical_margin'], image_copy.shape[0] - params['vertical_margin']):
-
-            black_pixel = 0
-            white_pixel = 0
-
+            black_pixel, white_pixel = 0, 0
             for col in range(params['horizontal_margin'], image_copy.shape[1] - params['horizontal_margin']):
-
                 if state_in:
 
                     if image_copy[row, col] >= params['white_value']:
@@ -86,13 +81,11 @@ class ImageProcessor:
                         break
 
                 elif state_out:
-
                     if image_copy[row, col] <= params['black_value']:
                         black_pixel += 1
 
                     if black_pixel >= params['min_black_pixels']:
-                        state_in = True
-                        state_out = False
+                        state_in, state_out = True, False
                         entry_point = row
                         cut_positions.append((entry_point, None))
                         break
@@ -177,7 +170,6 @@ class ImageProcessor:
             logging.error(e)
             return False
 
-    @asynchronous
     def __process_image(self, image: np.ndarray, out_dir: str, page_no: str, image_type: str) -> bool:
         path = join(out_dir, page_no)
 
@@ -239,7 +231,7 @@ class ImageProcessor:
 
             for image_path in image_files:
                 image = io.imread(image_path, as_grey=True)
-                page_no = str(basename(image_path).split('.')[1])
+                page_no = str(basename(image_path).split('.')[0])
                 self.__process_image(image, d, page_no, image_type)
 
         return True
