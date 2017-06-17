@@ -239,7 +239,7 @@ class ImageProcessor:
 
             for image_path in image_files:
                 image = io.imread(image_path, as_grey=True)
-                page_no = basename(image_path).split('.')[1]
+                page_no = str(basename(image_path).split('.')[1])
                 self.__process_image(image, d, page_no, image_type)
 
         return True
