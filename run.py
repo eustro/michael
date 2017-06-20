@@ -1,15 +1,7 @@
 # coding=utf-8
 
 import argparse
-import logging
 
-from app.chronicle_processor import ChronicleProcessor
-from app.image_processor import ImageProcessor
-from app.ocr_processor import OCRProcessor
-from app.pdf_processor import PDFProcessor
-from app.pos_processor import POSProcessor
-
-from app.config import Config
 
 parser = argparse.ArgumentParser(prog='PDFCrop')
 
@@ -37,6 +29,13 @@ args = parser.parse_args()
 
 
 def main():
+    from app.chronicle_processor import ChronicleProcessor
+    from app.image_processor import ImageProcessor
+    from app.ocr_processor import OCRProcessor
+    from app.pdf_processor import PDFProcessor
+    from app.pos_processor import POSProcessor
+    from app.config import Config
+
     conf = Config(in_dir=args.input_dir,
                   out_dir=args.output_dir,
                   lang=args.language,
@@ -92,7 +91,7 @@ def main():
             try:
                 o.run()
             except Exception as e:
-                logging.error(e)
+                print("Could not run {0}: {1}".format(repr(o), repr(e)))
                 continue
 
 

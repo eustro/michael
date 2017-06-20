@@ -4,7 +4,6 @@
 Arranges the four major text parts of the chronicle.
 """
 
-from logging import error
 from os import rename
 from os.path import basename
 from os.path import dirname
@@ -13,11 +12,11 @@ from skimage.io import imread
 from .util import list_sub_dirs
 from .util import walk_dir
 
-from app.config import Config
-
 
 class ChronicleProcessor:
     def __init__(self, conf):
+        from app.config import Config
+
         if not isinstance(conf, Config) or not conf:
             raise TypeError('Need instance of Config class!')
         self.conf = conf
@@ -34,7 +33,7 @@ class ChronicleProcessor:
         images = walk_dir(in_dir, file_type=image_type)
         # Maybe no output by image processing, so need to be checked manually!
         if not images or images == []:
-            return {}
+            raise Exception("No images found in {0}".format(in_dir))
 
         images = []
 

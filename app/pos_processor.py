@@ -6,18 +6,11 @@ Uses tree-tagger chunker, tagger and lemmatizer on text files.
 """
 
 import os
-from logging import error
-
-from .util import open_file
-from .util import list_sub_dirs
-from .util import walk_dir
-from .util import dump_obj_to_json
-
-from app.config import Config
 
 
 class POSProcessor:
     def __init__(self, conf):
+        from app.config import Config
         if not isinstance(conf, Config) or not conf:
             raise TypeError('Need instance of Config class!')
         self.conf = conf
@@ -34,10 +27,11 @@ class POSProcessor:
         from treetaggerwrapper import TreeTagger
         from treetaggerwrapper import make_tags
 
+        from .util import open_file
+
         json_skeleton = []
         if lang not in ('en', 'es', 'de', 'fr'):
-            error('{0} language not supported by TreeTagger!'.format(lang))
-            return []
+            raise Exception('{0} language not supported by TreeTagger!'.format(lang))
         fp = open_file(path)
         if not fp:
             return []
@@ -45,8 +39,8 @@ class POSProcessor:
             txt = fp.read()
             fp.close()
         except Exception as e:
-            error(e)
-            return []
+            raise Exception("Could not read txt file: {0}, {1}".format(path, repr(e)))
+
         # TODO: Find a way to include treetagger location.
         tagger = TreeTagger(TAGLANG=lang, TAGDIR='/Users/eugenstroh/TreeTagger')
         tags = tagger.tag_text(txt)
@@ -62,14 +56,17 @@ class POSProcessor:
         try:
             return json_skeleton
         except Exception as e:
-            error(e)
-            return []
+            raise Exception("Could not parse json: {0}".format(repr(e)))
 
     def __tag_file_stanford_tagger(self, path: str, lang: str) -> list:
         pass
 
     # TODO: Change triple loop, use a recursive search through path.
     def __tag_file_stack(self):
+        from .util import list_sub_dirs
+        from .util import walk_dir
+        from .util import dump_obj_to_json
+
         in_dir = self.conf.in_dir
         all_docs = list_sub_dirs(in_dir)
         for doc in all_docs:

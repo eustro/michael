@@ -179,8 +179,7 @@ class ImageProcessor:
         try:
             mkdir(join(out_dir, page_no))
         except OSError as e:
-            logging.error(e)
-            return False
+            raise Exception("Could not create out_dir with page_no: {0}, {1}".format(join(out_dir, page_no), repr(e)))
 
         file_name = 1
 

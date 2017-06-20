@@ -113,7 +113,7 @@ class Config:
                   'min_crop_ratio': 11.0,
 
                   'correction_upper': -20,
-                  'correction_lower': -20,
+                  'correction_lower': -10,
                   'correction_left': -20,
                   'correction_right': +20,
 
