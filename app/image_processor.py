@@ -221,12 +221,12 @@ class ImageProcessor:
         dirs = list_sub_dirs(in_dir)
 
         if not dirs:
-            raise Exception('Path tree seems to invalid in: {0}'.format(in_dir))
+            raise Exception('Path tree seems to invalid in: {0}. Path has different structure'.format(in_dir))
 
         for d in dirs:
             image_files = walk_dir(d, image_type)
             if not image_files:
-                raise Exception('No image files found in: {0}'.format(d))
+                continue
 
             for image_path in image_files:
                 image = io.imread(image_path, as_grey=True)
