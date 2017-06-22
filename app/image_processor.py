@@ -28,6 +28,7 @@ class ImageProcessor:
         self.conf = conf
 
     def __detect_text_boxes(self, image: np.ndarray, vertical=False) -> list:
+        from math import floor
         from skimage.transform import rotate
         if image.ndim > 2 or 0 in image.shape:
             return []
@@ -73,11 +74,11 @@ class ImageProcessor:
                         entry_p = cut_positions[-1][0]
                         exit_p = row
                         if vertical:
-                            cut_positions[-1] = (entry_p + params['correction_left'],
-                                                 exit_p + params['correction_right'])
+                            cut_positions[-1] = (floor(entry_p + params['correction_left']),
+                                                 floor(exit_p + params['correction_right']))
                         else:
-                            cut_positions[-1] = (entry_p + params['correction_upper'],
-                                                 exit_p + params['correction_lower'])
+                            cut_positions[-1] = (floor(entry_p + params['correction_upper']),
+                                                 floor(exit_p + params['correction_lower']))
                         break
 
                 elif state_out:
@@ -91,7 +92,7 @@ class ImageProcessor:
                         break
 
         cut_positions[:] = [pos for pos in cut_positions if None not in pos]
-
+        print(cut_positions)
         return cut_positions
 
     def __cut_text_from_image(self, image: np.ndarray) -> list:

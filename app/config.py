@@ -113,12 +113,12 @@ class Config:
                   'min_crop_ratio': 11.0,
 
                   'correction_upper': -20,
-                  'correction_lower': -10,
+                  'correction_lower': +10,
                   'correction_left': -20,
                   'correction_right': +20,
 
-                  'vertical_margin': int(0.01 * float(dim_2)),
-                  'horizontal_margin': int(0.01 * float(dim_1))}
+                  'vertical_margin': int(0.1 * float(dim_2)),
+                  'horizontal_margin': int(0.1 * float(dim_1))}
 
         params['min_white_lines'] *= max(dim_1, dim_2)
 
@@ -145,7 +145,7 @@ class Config:
         if self.config_files['params_text_cut']:
             return self.config_files['params_text_cut']
 
-        params = {'filter_small_hor': 0.035,
+        params = {'filter_small_hor': 0.05,
                   'filter_small_ver': 0.15,
                   'max_no_of_hor_cuts': 10,
                   'max_no_of_ver_cuts': 2}
