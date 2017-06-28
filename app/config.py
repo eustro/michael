@@ -106,10 +106,9 @@ class Config:
         params = {'black_value': 0.1,
                   'white_value': 0.9,
 
-                  'min_black_pixels': 0.00625 * min(dim_1, dim_2) + 5,
-                  'min_white_pixels': min(dim_1, dim_2),
-                  'min_white_lines': 0.006,
-                  'min_black_lines': 0.001875,
+                  'min_black_pixels': 0.02 * min(dim_1, dim_2),
+                  'min_white_pixels': 0.999 * min(dim_1, dim_2),
+                  'min_white_lines': 0.005,
                   'min_crop_ratio': 11.0,
 
                   'correction_upper': -20,
@@ -117,12 +116,10 @@ class Config:
                   'correction_left': -20,
                   'correction_right': +20,
 
-                  'vertical_margin': int(0.1 * float(dim_2)),
-                  'horizontal_margin': int(0.1 * float(dim_1))}
+                  'vertical_margin': int(0.05 * float(dim_2)),
+                  'horizontal_margin': int(0.05 * float(dim_1))}
 
         params['min_white_lines'] *= max(dim_1, dim_2)
-
-        params['min_black_lines'] *= max(dim_1, dim_2)
 
         if params['horizontal_margin'] > 0:
             params['min_white_pixels'] -= 2 * params['horizontal_margin']

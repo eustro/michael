@@ -6,7 +6,6 @@ Module provides optical text box recognition in image files.
 """
 
 import logging
-from os import mkdir
 from os.path import basename
 from os.path import exists
 from os.path import join
@@ -55,18 +54,20 @@ class ImageProcessor:
             black_pixel, white_pixel = 0, 0
             for col in range(params['horizontal_margin'], image_copy.shape[1] - params['horizontal_margin']):
                 if state_in:
-
                     if image_copy[row, col] >= params['white_value']:
                         white_pixel += 1
 
+                    if image_copy[row, col] <= params['black_value']:
+                        # pixels_read.append(image_copy[row, col])
+                        black_pixel += 1
+
                     if white_pixel >= params['min_white_pixels']:
                         curr_white_lines += 1
-
-                    if image_copy[row, col] <= params['black_value']:
-                        black_pixel += 1
+                        break
 
                     if black_pixel >= params['min_black_pixels']:
                         curr_white_lines = 0
+                        break
 
                     if curr_white_lines >= params['min_white_lines']:
                         curr_white_lines = 0
@@ -92,7 +93,7 @@ class ImageProcessor:
                         break
 
         cut_positions[:] = [pos for pos in cut_positions if None not in pos]
-        print(cut_positions)
+
         return cut_positions
 
     def __cut_text_from_image(self, image: np.ndarray) -> list:
@@ -172,15 +173,19 @@ class ImageProcessor:
             return False
 
     def __process_image(self, image: np.ndarray, out_dir: str, page_no: str, image_type: str) -> bool:
+        from os import mkdir
+
         path = join(out_dir, page_no)
 
         if exists(path) and walk_dir(path, file_type="." + image_type):
             clear_dir(path, del_sudirs=True, file_ext="." + image_type)
 
+        dir_name = join(out_dir, page_no)
         try:
-            mkdir(join(out_dir, page_no))
+            mkdir(dir_name)
         except OSError as e:
-            raise Exception("Could not create out_dir with page_no: {0}, {1}".format(join(out_dir, page_no), repr(e)))
+            if not exists(join(out_dir, page_no)):
+                raise Exception("Could not create out_dir with page_no: {0}, {1}".format(join(out_dir, page_no), repr(e)))
 
         file_name = 1
 
