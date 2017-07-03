@@ -44,6 +44,8 @@ class ImageProcessor:
         else:
             image_copy = image
 
+        dim1, dim2 = image_copy.shape
+        
         state_in, state_out = False, True
 
         curr_white_lines = 0
@@ -52,49 +54,71 @@ class ImageProcessor:
 
         for row in range(params['vertical_margin'], image_copy.shape[0] - params['vertical_margin']):
             black_pixel, white_pixel = 0, 0
+            black_pixels_read = []
             for col in range(params['horizontal_margin'], image_copy.shape[1] - params['horizontal_margin']):
                 if state_in:
                     if image_copy[row, col] >= params['white_value']:
                         white_pixel += 1
 
                     if image_copy[row, col] <= params['black_value']:
-                        # pixels_read.append(image_copy[row, col])
                         black_pixel += 1
+                        black_pixels_read.append(col)
 
-                    if white_pixel >= params['min_white_pixels']:
-                        curr_white_lines += 1
-                        break
+                    if col == (image_copy.shape[1] - params['horizontal_margin'] - 1):
 
-                    if black_pixel >= params['min_black_pixels']:
-                        curr_white_lines = 0
-                        break
-
-                    if curr_white_lines >= params['min_white_lines']:
-                        curr_white_lines = 0
-                        state_out, state_in = True, False
-                        entry_p = cut_positions[-1][0]
-                        exit_p = row
-                        if vertical:
-                            cut_positions[-1] = (floor(entry_p + params['correction_left']),
-                                                 floor(exit_p + params['correction_right']))
+                        if self.__black_pixels_are_dense(black_pixels_read, params['max_distance']):
+                            curr_white_lines = 0
                         else:
-                            cut_positions[-1] = (floor(entry_p + params['correction_upper']),
-                                                 floor(exit_p + params['correction_lower']))
-                        break
+                            curr_white_lines += 1
+
+                        if curr_white_lines >= params['min_white_lines']:
+                            curr_white_lines = 0
+                            state_out, state_in = True, False
+                            entry_p = cut_positions[-1][0]
+                            exit_p = row
+                            if vertical:
+                                cut_positions[-1] = (floor(entry_p + params['correction_left']),
+                                                     floor(exit_p + params['correction_right']))
+                            else:
+                                cut_positions[-1] = (floor(entry_p + params['correction_upper']),
+                                                     floor(exit_p + params['correction_lower']))
+                            break
+                        else:
+                            continue
 
                 elif state_out:
                     if image_copy[row, col] <= params['black_value']:
                         black_pixel += 1
-
-                    if black_pixel >= params['min_black_pixels']:
-                        state_in, state_out = True, False
-                        entry_point = row
-                        cut_positions.append((entry_point, None))
-                        break
+                        black_pixels_read.append(col)
+                    if col == (image_copy.shape[1] - params['horizontal_margin'] - 1):
+                        if self.__black_pixels_are_dense(black_pixels_read, params['max_distance']):
+                            state_in, state_out = True, False
+                            entry_point = row
+                            cut_positions.append((entry_point, None))
 
         cut_positions[:] = [pos for pos in cut_positions if None not in pos]
 
         return cut_positions
+
+    def __black_pixels_are_dense(self, black_pixels: list, max_distance: int):
+        from math import log
+        if not black_pixels:
+            return False
+
+        if len(black_pixels) < 50:
+            return False
+
+        distances = []
+        black_pixels = black_pixels[::-1]
+
+        for i in range(len(black_pixels) - 1):
+            distances.append(log(black_pixels[i] - black_pixels[i + 1]))
+
+        average = sum(distances) / len(black_pixels)
+        if int(average) <= max_distance:
+            return True
+        else:
+            return False
 
     def __cut_text_from_image(self, image: np.ndarray) -> list:
         params = self.conf.params_text_cut
@@ -242,4 +266,8 @@ class ImageProcessor:
         return True
 
     def run(self) -> None:
-        self.__process_image_stack()
+        try:
+            self.__process_image_stack()
+        except KeyboardInterrupt:
+            print("Computation exited.")
+
