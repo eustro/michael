@@ -46,7 +46,7 @@ def main():
     if args.conf_dir:
         conf.conf_dir = args.conf_dir
     if args.image_type:
-        conf.immage_type = args.image_type
+        conf.image_type = args.image_type
     if args.dpi:
         conf.pdf_dpi = args.dpi
     if args.verbose:
@@ -99,4 +99,7 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\nComputation cancelled.")
