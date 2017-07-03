@@ -18,6 +18,7 @@ parser.add_argument('--image', help='Process image files from pdf files.', actio
 parser.add_argument('--chronicle', help='Process chronicle of Michael the Syrian.', action="store_true")
 parser.add_argument('--ocr', help='Run Google Tesseract OCR on data.', action='store_true')
 parser.add_argument('--pos', help='Run POS tagging on data.', action='store_true')
+parser.add_argument('--verbose', help='Print computation progress.', action='store_true')
 
 # Optional
 parser.add_argument('--conf_dir', help='Specify configuration files directory, if you have some custom ones.')
@@ -30,7 +31,7 @@ args = parser.parse_args()
 
 def main():
     from app.chronicle_processor import ChronicleProcessor
-    from app.image_processor import ImageProcessor
+    from app.layout_processor import ImageProcessor
     from app.ocr_processor import OCRProcessor
     from app.pdf_processor import PDFProcessor
     from app.pos_processor import POSProcessor
@@ -48,6 +49,8 @@ def main():
         conf.immage_type = args.image_type
     if args.dpi:
         conf.pdf_dpi = args.dpi
+    if args.verbose:
+        conf.verbose = True
     if args.dump_conf:
         conf.dump_conf = args.dump_conf
 

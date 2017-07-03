@@ -44,6 +44,7 @@ class Config:
         self.image_type = image_type
         self.config_dir = config_dir
         self.dump_conf = dump_conf
+        self.verbose = False
         self.config_files = self.read_config_files()
         # NOTE: Function reference for text ox params, because they depend on cut size.
         self.params_text_box = self.set_params_text_box()
@@ -86,12 +87,14 @@ class Config:
 
         return config_dicts
 
-    def set_params_text_box(self, resolution=(1200, 1600), default_dim=(1200, 1600)) -> dict:
+    def set_params_text_box(self, resolution=(1200, 1600)) -> dict:
         """
         Function sets params for text box recognition.
 
         If json config not found, default values are used.
         """
+        default_dim = (1200, 1600)
+
         if self.config_files['params_text_box']:
             return self.config_files['params_text_box']
 
@@ -99,17 +102,16 @@ class Config:
             dim_1, dim_2 = resolution
         else:
             dim_1, dim_2 = 1200, 1600
-        # Reference resolution of 150 dpi.
-        # Resolution lower than that yields inaccurate results.
+
         def_dim_1, def_dim_2 = default_dim
 
         params = {'black_value': 0.1,
                   'white_value': 0.9,
 
-                  'min_white_lines': 0.008,
+                  'min_white_lines': 0.01,
                   'min_crop_ratio': 11.0,
-                  'max_distance': 0.27,
-                  'density_noise_filter': 50,
+                  'max_distance': 1.0,
+                  'density_filter': 50,
 
                   'correction_upper': -20,
                   'correction_lower': +10,
@@ -141,7 +143,7 @@ class Config:
 
         params = {'filter_small_hor': 0.05,
                   'filter_small_ver': 0.15,
-                  'max_no_of_hor_cuts': 10,
+                  'max_no_of_hor_cuts': 30,
                   'max_no_of_ver_cuts': 2}
 
         return params
@@ -163,12 +165,4 @@ class Config:
 
     # TODO
     def set_pos_params(self):
-        pass
-
-    # TODO
-    def set_nlp_params(self):
-        pass
-
-    # TODO
-    def set_clening_params(self):
         pass

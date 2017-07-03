@@ -86,4 +86,7 @@ class POSProcessor:
                     dump_obj_to_json(page, fname + '_pos' + '.json', json_obj)
 
     def run(self) -> None:
-        self.__tag_file_stack()
+        try:
+            self.__tag_file_stack()
+        except KeyboardInterrupt:
+            print("\nComputation cancelled.")

@@ -136,4 +136,7 @@ class ChronicleProcessor:
         return True
 
     def run(self) -> None:
-        self.__process_chronicle()
+        try:
+            self.__process_chronicle()
+        except KeyboardInterrupt:
+            print("\nComputation cancelled.")

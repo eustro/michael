@@ -64,9 +64,11 @@ class ImageProcessor:
                         black_pixel += 1
                         black_pixels_read.append(col)
 
-                    if col == (dim1 - params['horizontal_margin'] - 1):
+                    if col == (dim2 - params['horizontal_margin'] - 1):
 
-                        if self.__black_pixels_are_dense(black_pixels_read, params['max_distance']):
+                        if self.__black_pixels_are_dense(black_pixels_read,
+                                                         params['max_distance'],
+                                                         params['density_filter']):
                             curr_white_lines = 0
                         else:
                             curr_white_lines += 1
@@ -90,8 +92,10 @@ class ImageProcessor:
                     if image_copy[row, col] <= params['black_value']:
                         black_pixel += 1
                         black_pixels_read.append(col)
-                    if col == (dim1 - params['horizontal_margin'] - 1):
-                        if self.__black_pixels_are_dense(black_pixels_read, params['max_distance']):
+                    if col == (dim2 - params['horizontal_margin'] - 1):
+                        if self.__black_pixels_are_dense(black_pixels_read,
+                                                         params['max_distance'],
+                                                         params['density_filter']):
                             state_in, state_out = True, False
                             entry_point = row
                             cut_positions.append((entry_point, None))
@@ -100,12 +104,16 @@ class ImageProcessor:
 
         return cut_positions
 
-    def __black_pixels_are_dense(self, black_pixels: list, max_distance: int):
+    @staticmethod
+    def __black_pixels_are_dense(black_pixels: list, max_distance: float, density_filter: int):
         from math import log
+        from math import floor
+        from math import ceil
+
         if not black_pixels:
             return False
 
-        if len(black_pixels) < 50:
+        if len(black_pixels) < density_filter:
             return False
 
         distances = []
@@ -115,7 +123,7 @@ class ImageProcessor:
             distances.append(log(black_pixels[i] - black_pixels[i + 1]))
 
         average = sum(distances) / len(black_pixels)
-        if int(average) <= max_distance:
+        if floor(average) <= ceil(max_distance):
             return True
         else:
             return False
@@ -250,6 +258,9 @@ class ImageProcessor:
 
         dirs = list_sub_dirs(in_dir)
 
+        if self.conf.verbose:
+            print("Processing " + str(len(dirs)) + " in path " + in_dir)
+
         if not dirs:
             raise Exception('Path tree seems to invalid in: {0}. Path has different structure'.format(in_dir))
 
@@ -259,6 +270,8 @@ class ImageProcessor:
                 continue
 
             for image_path in image_files:
+                if self.conf.verbose:
+                    print(" ... " + image_path + " images " + " ... ")
                 image = io.imread(image_path, as_grey=True)
                 page_no = str(basename(image_path).split('.')[0])
                 self.__process_image(image, d, page_no, image_type)
@@ -269,5 +282,5 @@ class ImageProcessor:
         try:
             self.__process_image_stack()
         except KeyboardInterrupt:
-            print("Computation exited.")
+            print("\nComputation cancelled.")
 

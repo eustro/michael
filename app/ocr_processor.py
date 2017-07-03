@@ -59,4 +59,7 @@ class OCRProcessor:
         return True
 
     def run(self) -> None:
-        self.__ocr_on_image_stack()
+        try:
+            self.__ocr_on_image_stack()
+        except KeyboardInterrupt:
+            print("\nComputation cancelled.")
