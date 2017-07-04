@@ -259,7 +259,8 @@ class ImageProcessor:
         dirs = list_sub_dirs(in_dir)
 
         if self.conf.verbose:
-            print("Processing " + str(len(dirs)) + " in path " + in_dir)
+            print("++ Layout Processor ++")
+            print("   Processing " + str(len(dirs)) + " file(s) in path " + in_dir)
 
         if not dirs:
             raise Exception('Path tree seems to invalid in: {0}. Path has different structure'.format(in_dir))
@@ -271,10 +272,12 @@ class ImageProcessor:
 
             for image_path in image_files:
                 if self.conf.verbose:
-                    print(" ... " + image_path + " images " + " ... ")
+                    print("    ... " + image_path + " ... ")
                 image = io.imread(image_path, as_grey=True)
                 page_no = str(basename(image_path).split('.')[0])
                 self.__process_image(image, d, page_no, image_type)
+        if self.conf.verbose:
+            print("++++++++++++++++++++++")
 
         return True
 

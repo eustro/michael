@@ -85,6 +85,9 @@ def main():
            ocr_processor,
            pos_processor)
 
+    if conf.verbose:
+        print("### Starting Processing ###")
+
     if not any(ops):
         print('You must specify at least one of the following: pdf, image, chronicle, ocr or pos!')
         exit(0)
@@ -96,6 +99,9 @@ def main():
             except Exception as e:
                 print("Could not run {0}: {1}".format(repr(o), repr(e)))
                 continue
+
+    if conf.verbose:
+        print("### Processing terminated ###")
 
 
 if __name__ == '__main__':

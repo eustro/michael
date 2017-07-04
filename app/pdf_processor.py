@@ -58,7 +58,8 @@ class PDFProcessor:
         pdf_files = walk_dir(in_dir, file_type='pdf')
 
         if self.conf.verbose:
-            print("Processing " + str(len(pdf_files)) + " PDF files " + " in path " + in_dir)
+            print("++ PDF Processor ++")
+            print("   Processing " + str(len(pdf_files)) + " file(s) " + "in path " + in_dir)
 
         if not pdf_files:
             raise Exception('No PDF files found in: {0}'.format(in_dir))
@@ -66,8 +67,10 @@ class PDFProcessor:
         image_type = self.conf.image_type
         for pdf_path in pdf_files:
             if self.conf.verbose:
-                print(" ... " + pdf_path + " ... ")
+                print("    ... " + pdf_path + " ... ")
             self.__pdf_to_image(pdf_path, dpi, image_type)
+        if self.conf.verbose:
+            print("++++++++++++++++++++++")
         return True
 
     def run(self) -> None:

@@ -69,11 +69,17 @@ class POSProcessor:
 
         in_dir = self.conf.in_dir
         all_docs = list_sub_dirs(in_dir)
+
+        if self.conf.verbose:
+            print("++ POS Processor ++")
+            print("   Processing " +  str(len(all_docs)) + " directory(ies) in path " + in_dir)
         for doc in all_docs:
             doc_page = list_sub_dirs(doc)
             for page in doc_page:
                 txt_files = walk_dir(page, file_type='txt')
                 for txt in txt_files:
+                    if self.conf.verbose:
+                        print("   ... " + txt + " ... ")
                     fname = os.path.basename(txt)
                     # Overwrite file, if exists.
                     if 'pos' in fname:
@@ -84,6 +90,8 @@ class POSProcessor:
                         fname = str(fname.split('.')[0])
                     json_obj = self.__tag_file_tree_tagger(txt, self.conf.lang, tree_tagger_dir='')
                     dump_obj_to_json(page, fname + '_pos' + '.json', json_obj)
+        if self.conf.verbose:
+            print("++++++++++++++++++++++")
 
     def run(self) -> None:
         try:
