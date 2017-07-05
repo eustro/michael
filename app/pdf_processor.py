@@ -59,7 +59,7 @@ class PDFProcessor:
 
         if self.conf.verbose:
             print("++ PDF Processor ++")
-            print("   Processing " + str(len(pdf_files)) + " file(s) " + "in path " + in_dir)
+            print("   Processing file(s) " + "in path " + in_dir)
 
         if not pdf_files:
             raise Exception('No PDF files found in: {0}'.format(in_dir))

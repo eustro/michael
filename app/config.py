@@ -108,7 +108,7 @@ class Config:
         params = {'black_value': 0.1,
                   'white_value': 0.9,
 
-                  'min_white_lines': 0.0085,
+                  'min_white_lines': 0.008,
                   'min_crop_ratio': 11.0,
                   'max_distance': 1.0,
                   'density_filter': 35,

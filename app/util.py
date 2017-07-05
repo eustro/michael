@@ -5,9 +5,6 @@
 Module for basic operations on directories.
 """
 
-from json import dump
-from json import load
-from logging import error
 from os import remove
 from os import rmdir
 from os import walk
@@ -20,27 +17,25 @@ def walk_dir(path: str, file_type: str) -> list:
     Walks directory to find all files with given file type extension.
     """
     try:
-        __, __, filenames = next(walk(path), (None, None, []))
-        file_paths = [join(path, a_file) for a_file in filenames
+        __, __, file_names = next(walk(path), (None, None, []))
+        file_paths = [join(path, a_file) for a_file in file_names
                       if a_file.endswith(file_type)]
-        return file_paths
-    except IOError as io:
-        error(io)
-        return []
+        return sorted(file_paths, key=natural_keys)
+    except Exception as e:
+        raise Exception("Could not read {0}: {1}".format(path, repr(e)))
 
 
 def list_sub_dirs(path: str) -> list:
     """
     Lists all subdirectories in given directory.
-    Retruns absolute paths of directories.
+    Returns absolute paths of directories.
     """
     try:
         __, ls_dir, __ = next(walk(path), (None, None, []))
         ls_dir[:] = [join(path, entry) for entry in ls_dir]
-        return ls_dir
-    except IOError as io:
-        error(io)
-        return []
+        return sorted(ls_dir, key=natural_keys)
+    except Exception as e:
+        raise Exception("Could not read {0}: {1}".format(path, repr(e)))
 
 
 def clear_dir(path: str, del_sudirs=False, file_ext=None) -> bool:
@@ -57,15 +52,15 @@ def clear_dir(path: str, del_sudirs=False, file_ext=None) -> bool:
             if any(ext in a_file for ext in file_ext):
                 try:
                     remove(a_file)
-                except OSError as os:
-                    error(os)
+                except Exception as e:
+                    raise Exception("Could not read {0}: {1}".format(path, repr(e)))
         if del_sudirs:
             dir_paths = [join(dirpath, sub) for sub in subdirs]
             for sub in dir_paths:
                 try:
                     rmdir(sub)
-                except OSError as os:
-                    error(os)
+                except Exception as e:
+                    raise Exception("Could not read {0}: {1}".format(path, repr(e)))
     return True
 
 
@@ -82,9 +77,8 @@ def open_file(path: str, encoding='utf-8'):
     try:
         fp = open(path, mode='r', encoding=encoding)
         return fp
-    except IOError as io:
-        error(io)
-        return None
+    except Exception as e:
+        raise Exception("Could not read {0}: {1}".format(path, repr(e)))
 
 
 def create_file(path: str, file_name: str, encoding='utf-8'):
@@ -102,9 +96,8 @@ def create_file(path: str, file_name: str, encoding='utf-8'):
     try:
         fp = open(file_path, mode='x', encoding=encoding)
         return fp
-    except IOError as io:
-        error(io)
-        return None
+    except Exception as e:
+        raise Exception("Could not read {0}: {1}".format(path, repr(e)))
 
 
 def dump_obj_to_json(out_path: str, file_name: str, obj: object) -> bool:
@@ -113,6 +106,7 @@ def dump_obj_to_json(out_path: str, file_name: str, obj: object) -> bool:
     Returns True on sucess.
     Returns False on failure.
     """
+    from json import dump
     if not exists(out_path):
         return False
     fp = create_file(out_path, file_name)
@@ -126,8 +120,7 @@ def dump_obj_to_json(out_path: str, file_name: str, obj: object) -> bool:
         fp.close()
         return True
     except Exception as e:
-        error(e)
-        return False
+        raise Exception("Could not make json file: {0}".format(repr(e)))
 
 
 def read_json_to_obj(file_path: str) -> bool:
@@ -136,6 +129,7 @@ def read_json_to_obj(file_path: str) -> bool:
     Returns True on sucess.
     Returns False on failure.
     """
+    from json import load
     if not exists(file_path):
         return False
     fp = open_file(file_path)
@@ -145,5 +139,14 @@ def read_json_to_obj(file_path: str) -> bool:
         obj = load(fp)
         return obj
     except Exception as e:
-        error(e)
-        return False
+        raise Exception("Could not make json file: {0}.".format(repr(e)))
+
+
+def atoi(text: str) -> int or str:
+    return int(text) if text.isdigit() else text
+
+
+def natural_keys(text: str) -> list:
+    import re
+    return [atoi(c) for c in re.split('(\d+)', text)]
+

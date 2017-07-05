@@ -260,7 +260,7 @@ class ImageProcessor:
 
         if self.conf.verbose:
             print("++ Layout Processor ++")
-            print("   Processing " + str(len(dirs)) + " file(s) in path " + in_dir)
+            print("   Processing file(s) in path " + in_dir)
 
         if not dirs:
             raise Exception('Path tree seems to invalid in: {0}. Path has different structure'.format(in_dir))
