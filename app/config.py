@@ -111,7 +111,7 @@ class Config:
                   'min_white_lines': 0.008,
                   'min_crop_ratio': 11.0,
                   'max_distance': 1.0,
-                  'density_filter': 35,
+                  'density_filter': 0.008 * dim_2,
 
                   'correction_upper': -20,
                   'correction_lower': +10,
