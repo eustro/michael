@@ -53,15 +53,10 @@ class ImageProcessor:
         cut_positions = []
 
         for row in range(params['vertical_margin'], dim1 - params['vertical_margin']):
-            black_pixel, white_pixel = 0, 0
             black_pixels_read = []
             for col in range(params['horizontal_margin'], dim2 - params['horizontal_margin']):
                 if state_in:
-                    if image_copy[row, col] >= params['white_value']:
-                        white_pixel += 1
-
                     if image_copy[row, col] <= params['black_value']:
-                        black_pixel += 1
                         black_pixels_read.append(col)
 
                     if col == (dim2 - params['horizontal_margin'] - 1):
@@ -90,7 +85,6 @@ class ImageProcessor:
 
                 elif state_out:
                     if image_copy[row, col] <= params['black_value']:
-                        black_pixel += 1
                         black_pixels_read.append(col)
                     if col == (dim2 - params['horizontal_margin'] - 1):
                         if self.__black_pixels_are_dense(black_pixels_read,
