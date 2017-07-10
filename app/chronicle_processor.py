@@ -48,48 +48,23 @@ class ChronicleProcessor:
                 print('{0} not found'.format(component))
                 continue
             images.append({'component': component, 'image': im})
-        if len(images) == 2:
-            text_fragments['footnotes'].append(images[1]['component'])
-        if images[0]['image'].shape[1] / page_width >= 0.5:
-            text_fragments['political'].append(images[0]['component'])
-        # Two columns: Secular, ecclesial. Footnotes beneath.
-        elif len(images) == 3:
-            # Label footnotes
-            text_fragments['footnotes'].append(images[2]['component'])
-            if images[1]['image'].shape[1] / page_width < 0.5:
-                text_fragments['misc'].append(images[1]['component'])
-            else:
-                text_fragments['political'].append(images[1]['component'])
-            if images[0]['image'].shape[1] / page_width < 0.5:
-                text_fragments['eccles'].append(images[0]['component'])
-            else:
-                text_fragments['political'].append(images[0]['component'])
-        # Political, secular, ecclesial
-        elif len(images) == 4:
-            # Label footnotes
-            text_fragments['footnotes'].append(images[3]['component'])
-
-            # Arrange ecclesial part
-            if images[2]['image'].shape[1] / page_width >= 0.5:
-                text_fragments['political'].append(images[2]['component'])
-            else:
-                text_fragments['eccles'].append(images[2]['component'])
-
-            # Arrange secular part
-            if images[1]['image'].shape[1] / page_width >= 0.5:
-                text_fragments['political'].append(images[1]['component'])
-            else:
-                text_fragments['misc'].append(images[1]['component'])
-
-            # Arrange political part
-            text_fragments['political'].append(images[0]['component'])
-        # We can not be sure, with what column of the chronicle we are dealing with.
-        # Case 1 part: There were probably more than one layout component merged together.
-        # Case 2 parts: Probably one big column and footnotes, but we can't be sure which parts there are.
-        #               Could be a L-formed shape of part that ended.
-        # Case < 4 parts: Probably some layout components got fragmented.
-        # Rename the path in '../[page_no]_unchecked' to find those cases.
-        else:
+        for i, im in enumerate(images):
+            image_width = im['image'].shape[1]
+            if image_width / page_width >= 0.5\
+                    and not (text_fragments['misc'] or text_fragments['eccles'])\
+                    and i < len(images) - 1:
+                text_fragments['political'].append(im['component'])
+                continue
+            if (image_width / page_width < 0.5) and not text_fragments['misc']:
+                text_fragments['misc'].append(im['component'])
+                continue
+            if (image_width / page_width < 0.5) and not text_fragments['eccles']:
+                text_fragments['eccles'].append(im['component'])
+                continue
+            if (image_width / page_width >= 0.5) and i >= len(images) - 2:
+                text_fragments['footnotes'].append(im['component'])
+                continue
+        if not text_fragments:
             new_name = in_dir
             if in_dir.endswith('/'):
                 new_name = in_dir[:-1]
